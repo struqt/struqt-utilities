@@ -102,7 +102,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <jmh.version>1.20</jmh.version>
     <javac.target>1.8</javac.target>
-    <uberjar.name>jmh-${artifactId}-${version}</uberjar.name>
+    <uberjar.name>jmh-${project.artifactId}-${project.version}</uberjar.name>
   </properties>
 
   <dependencies>
