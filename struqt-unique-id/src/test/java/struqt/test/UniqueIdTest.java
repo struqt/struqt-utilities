@@ -45,7 +45,7 @@ class UniqueIdTest {
   @DisplayName("Testing Unique ID UniqueIdCodec")
   class TestCodec {
     @Test
-    void defaultBits() {
+    protected void defaultBits() {
       UniqueIdCodec codec = UniqueId.getCodec();
       assertEquals(0x7FFFFFFFFFFFFFFFL, codec.encode(-1L, -1L, -1L));
       assertEquals(0x7FFFFFFFFFFL, codec.getTimestampMax());
@@ -57,7 +57,7 @@ class UniqueIdTest {
     }
 
     @Test
-    void customBits() {
+    protected void customBits() {
       UniqueIdCodec codec = new UniqueIdCodec(43L, 10L);
       assertEquals(0x7FFFFFFFFFFL, codec.getTimestampMax());
       assertEquals(0x3FFL, codec.getInstanceMax());
@@ -65,7 +65,7 @@ class UniqueIdTest {
     }
 
     @Test
-    void exceptionThrows() {
+    protected void exceptionThrows() {
       assertThrows(IllegalArgumentException.class, () -> new UniqueIdCodec(-1L, 1L));
       assertThrows(IllegalArgumentException.class, () -> new UniqueIdCodec(1L, -1L));
       assertThrows(IllegalArgumentException.class, () -> new UniqueIdCodec(40L, 23L));
@@ -76,7 +76,7 @@ class UniqueIdTest {
   @DisplayName("Testing Unique ID")
   class TestUniqueId {
     @Test
-    void minUniqueId() {
+    protected void minUniqueId() {
       UniqueId id = UniqueId.decode(0L);
       assertEquals(0L, id.getValue());
       assertEquals(0L, id.getTimestamp());
@@ -86,7 +86,7 @@ class UniqueIdTest {
     }
 
     @Test
-    void maxUniqueId() {
+    protected void maxUniqueId() {
       UniqueId id = UniqueId.valueOf(-1L);
       assertEquals(0x7FFFFFFFFFFFFFFFL, id.getValue());
       assertEquals(0x7FFFFFFFFFFL, id.getTimestamp());
@@ -97,7 +97,7 @@ class UniqueIdTest {
 
     @ParameterizedTest
     @ArgumentsSource(RandomParamsProvider.class)
-    void randomUniqueId(long timestamp, long sequence, long instance) {
+    protected void randomUniqueId(long timestamp, long sequence, long instance) {
       UniqueId id = UniqueId.decode(UniqueId.encode(timestamp, instance, sequence));
       assertEquals(timestamp, id.getTimestamp());
       assertEquals(instance, id.getInstance());
@@ -106,7 +106,7 @@ class UniqueIdTest {
 
     @ParameterizedTest
     @ArgumentsSource(RandomParamsProvider.class)
-    void equals(long timestamp, long sequence, long instance) {
+    protected void equals(long timestamp, long sequence, long instance) {
       UniqueId id1 = UniqueId.valueOf(timestamp, instance, sequence);
       UniqueId id2 = UniqueId.valueOf(timestamp, instance, sequence);
       assertEquals(id1, id1);
@@ -116,7 +116,7 @@ class UniqueIdTest {
 
     @ParameterizedTest
     @ArgumentsSource(RandomParamsProvider.class)
-    void hashCode(long timestamp, long sequence, long instance) {
+    protected void hashCode(long timestamp, long sequence, long instance) {
       UniqueId id = UniqueId.valueOf(timestamp, instance, sequence);
       long value = id.getValue();
       assertEquals((int) (value ^ (value >>> 32)), id.hashCode());
@@ -124,7 +124,7 @@ class UniqueIdTest {
 
     @ParameterizedTest
     @ArgumentsSource(RandomParamsProvider.class)
-    void toString(long timestamp, long sequence, long instance) {
+    protected void toString(long timestamp, long sequence, long instance) {
       UniqueId id = UniqueId.valueOf(timestamp, instance, sequence);
       long value = id.getValue();
       String s =
@@ -151,7 +151,7 @@ class UniqueIdTest {
     private final CountDownLatch latch = new CountDownLatch(latchCount);
 
     @Test
-    void generatorSingle() {
+    protected void generatorSingle() {
       int len = latchCount;
       long[] array = new long[len];
       long start = System.nanoTime();
@@ -163,7 +163,7 @@ class UniqueIdTest {
     }
 
     @Test
-    void generatorConcurrent() throws InterruptedException {
+    protected void generatorConcurrent() throws InterruptedException {
       int len = latchCount;
       long[] array = new long[len];
       long start = System.nanoTime();
@@ -183,7 +183,7 @@ class UniqueIdTest {
 
     @ParameterizedTest
     @ValueSource(longs = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20})
-    void generatorCustomBits(long instance) {
+    protected void generatorCustomBits(long instance) {
       if (instance > 19) {
         assertThrows(RuntimeException.class, () -> new UniqueIdCodec(43L, instance));
         return;
@@ -195,7 +195,7 @@ class UniqueIdTest {
     }
 
     @Test
-    void exceptionThrows() {
+    protected void exceptionThrows() {
       FakeGenerator fake = new FakeGenerator();
       FakeGenerator.fakeTime -= 100;
       assertThrows(TimeReversalException.class, fake::next);
