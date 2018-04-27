@@ -1,12 +1,17 @@
 language: java
 
 jdk:
-  - oraclejdk8
-  - oraclejdk9
+  - openjdk8
+  - openjdk9
 
 matrix:
   allow_failures:
-    - jdk: oraclejdk9
+    - jdk: openjdk9
+
+branches:
+  only:
+    - master
+    - 1.0
 
 after_success:
   - mvn clean test -Pcoveralls jacoco:report coveralls:report
