@@ -9,4 +9,4 @@ matrix:
     - jdk: oraclejdk9
 
 after_success:
-  - mvn clean test jacoco:report
+  - mvn clean test -Pcoveralls jacoco:report coveralls:report
