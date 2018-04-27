@@ -15,3 +15,4 @@ branches:
 
 after_success:
   - mvn clean test -Pcoveralls jacoco:report coveralls:report
+  - cd struqt-unique-id && mvn com.gavinmogan:codacy-maven-plugin:coverage -DcoverageReportFile=target/site/jacoco/jacoco.xml -DapiToken= -DprojectToken=${CODACY_PROJECT_TOKEN} && cd ..
