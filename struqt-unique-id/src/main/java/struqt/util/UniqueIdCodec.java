@@ -44,17 +44,27 @@ public final class UniqueIdCodec {
   }
 
   /**
-   * Encode three component to a UniqueID value.
+   * Encode three component to the value of UniqueID.
    *
    * @param timestamp timestamp component
    * @param instance instance component
    * @param sequence sequence component
-   * @return value of UniqueID
+   * @return the value of UniqueID
    */
   public long encode(final long timestamp, final long instance, final long sequence) {
     return ((timestamp << timestampShift) & timestampMask)
         | ((instance << instanceShift) & instanceMask)
         | (sequence & sequenceMask);
+  }
+
+  /**
+   * Decode the value of UniqueID to UniqueID object.
+   *
+   * @param id encoded unique id value
+   * @return UniqueId object
+   */
+  public UniqueId decode(final long id) {
+    return new UniqueId(getTimestamp(id), getInstance(id), getSequence(id));
   }
 
   public long getTimestamp(final long id) {

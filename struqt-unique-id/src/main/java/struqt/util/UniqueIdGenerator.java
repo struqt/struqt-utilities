@@ -24,14 +24,24 @@ public class UniqueIdGenerator {
   private long timeMillis;
 
   /**
-   * Constructor of class UniqueIdGenerator.
+   * Constructor.
    *
-   * @param instanceId ID of a distributed application instance
+   * @param instanceId ID of the generator instance
    */
   public UniqueIdGenerator(final long instanceId) {
-    this.codec = UniqueId.getCodec();
+    this(instanceId, null);
+  }
+
+  /**
+   * Constructor.
+   *
+   * @param instanceId ID of the generator instance
+   * @param codec custom codec
+   */
+  public UniqueIdGenerator(final long instanceId, final UniqueIdCodec codec) {
+    this.codec = codec == null ? UniqueId.getCodec() : codec;
     this.instance = instanceId;
-    this.sequenceMax = codec.getSequenceMax();
+    this.sequenceMax = this.codec.getSequenceMax();
     this.lock = new ReentrantLock();
     this.count = 0L;
     this.timeMillis = systemTimeMillis();
@@ -69,18 +79,10 @@ public class UniqueIdGenerator {
     } else if (now == prev) {
       while (now <= prev) {
         now = systemTimeMillis();
-        yield();
       }
       timeMillis = now;
     } else {
       throw new RuntimeException("Time reversal ??");
-    }
-  }
-
-  private void yield() {
-    try {
-      Thread.sleep(0L);
-    } catch (InterruptedException ignored) {
     }
   }
 

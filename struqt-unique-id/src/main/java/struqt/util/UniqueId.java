@@ -11,12 +11,16 @@ public class UniqueId {
     return decode(encode(timeMillis, instance, sequence));
   }
 
-  public static long encode(final long timeMillis, final long instance, final long sequence) {
-    return CODEC.encode(timeMillis, instance, sequence);
+  public static UniqueId valueOf(final long id) {
+    return getCodec().decode(id);
   }
 
   public static UniqueId decode(final long id) {
-    return new UniqueId(CODEC.getTimestamp(id), CODEC.getInstance(id), CODEC.getSequence(id));
+    return getCodec().decode(id);
+  }
+
+  public static long encode(final long timeMillis, final long instance, final long sequence) {
+    return getCodec().encode(timeMillis, instance, sequence);
   }
 
   public static UniqueIdCodec getCodec() {
@@ -30,7 +34,7 @@ public class UniqueId {
   private final long timestamp;
   private final long sequence;
 
-  private UniqueId(final long timestamp, final long instance, final long sequence) {
+  UniqueId(final long timestamp, final long instance, final long sequence) {
     this.value = CODEC.encode(timestamp, instance, sequence);
     this.timestamp = CODEC.getTimestamp(value);
     this.instance = CODEC.getInstance(value);

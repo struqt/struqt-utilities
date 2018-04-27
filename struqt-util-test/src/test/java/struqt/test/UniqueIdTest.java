@@ -14,6 +14,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import struqt.util.UniqueId;
@@ -30,7 +31,10 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisplayName("Testing UniqueID and Generator")
 class UniqueIdTest {
@@ -83,7 +87,7 @@ class UniqueIdTest {
 
     @Test
     void maxUniqueId() {
-      UniqueId id = UniqueId.decode(-1L);
+      UniqueId id = UniqueId.valueOf(-1L);
       assertEquals(0x7FFFFFFFFFFFFFFFL, id.getValue());
       assertEquals(0x7FFFFFFFFFFL, id.getTimestamp());
       assertEquals(0x1FFL, id.getInstance());
@@ -177,11 +181,24 @@ class UniqueIdTest {
       }
     }
 
+    @ParameterizedTest
+    @ValueSource(longs = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20})
+    void generatorCustomBits(long instance) {
+      if (instance > 19) {
+        assertThrows(RuntimeException.class, () -> new UniqueIdCodec(43L, instance));
+        return;
+      }
+      UniqueIdCodec codec = new UniqueIdCodec(43L, instance);
+      UniqueIdGenerator gen = new UniqueIdGenerator(instance, codec);
+      assertEquals(instance, codec.decode(gen.next()).getInstance());
+      assertEquals(instance, codec.getInstance(gen.next()));
+    }
+
     @Test
     void exceptionThrows() {
       FakeGenerator fake = new FakeGenerator();
       FakeGenerator.fakeTime -= 100;
-      Assertions.assertThrows(RuntimeException.class, fake::next);
+      assertThrows(RuntimeException.class, fake::next);
     }
   }
 
