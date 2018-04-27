@@ -5,7 +5,6 @@
 
 package struqt.test;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -17,6 +16,7 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import struqt.util.TimeReversalException;
 import struqt.util.UniqueId;
 import struqt.util.UniqueIdCodec;
 import struqt.util.UniqueIdGenerator;
@@ -66,9 +66,9 @@ class UniqueIdTest {
 
     @Test
     void exceptionThrows() {
-      Assertions.assertThrows(IllegalArgumentException.class, () -> new UniqueIdCodec(-1L, 1L));
-      Assertions.assertThrows(IllegalArgumentException.class, () -> new UniqueIdCodec(1L, -1L));
-      Assertions.assertThrows(IllegalArgumentException.class, () -> new UniqueIdCodec(40L, 23L));
+      assertThrows(IllegalArgumentException.class, () -> new UniqueIdCodec(-1L, 1L));
+      assertThrows(IllegalArgumentException.class, () -> new UniqueIdCodec(1L, -1L));
+      assertThrows(IllegalArgumentException.class, () -> new UniqueIdCodec(40L, 23L));
     }
   }
 
@@ -198,7 +198,7 @@ class UniqueIdTest {
     void exceptionThrows() {
       FakeGenerator fake = new FakeGenerator();
       FakeGenerator.fakeTime -= 100;
-      assertThrows(RuntimeException.class, fake::next);
+      assertThrows(TimeReversalException.class, fake::next);
     }
   }
 
@@ -234,7 +234,7 @@ class UniqueIdTest {
   }
 
   private static final class FakeGenerator extends UniqueIdGenerator {
-    static long fakeTime = Integer.MAX_VALUE;
+    private static long fakeTime = Integer.MAX_VALUE;
 
     private FakeGenerator() {
       super(0L);

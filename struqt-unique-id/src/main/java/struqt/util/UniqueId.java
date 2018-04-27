@@ -7,6 +7,12 @@ package struqt.util;
 
 public class UniqueId {
 
+  private static final UniqueIdCodec CODEC = new UniqueIdCodec(43L, 9L);
+  private final long value;
+  private final long instance;
+  private final long timestamp;
+  private final long sequence;
+
   public static UniqueId valueOf(final long timeMillis, final long instance, final long sequence) {
     return decode(encode(timeMillis, instance, sequence));
   }
@@ -26,13 +32,6 @@ public class UniqueId {
   public static UniqueIdCodec getCodec() {
     return CODEC;
   }
-
-  private static final UniqueIdCodec CODEC = new UniqueIdCodec(43L, 9L);
-
-  private final long value;
-  private final long instance;
-  private final long timestamp;
-  private final long sequence;
 
   UniqueId(final long timestamp, final long instance, final long sequence) {
     this.value = CODEC.encode(timestamp, instance, sequence);

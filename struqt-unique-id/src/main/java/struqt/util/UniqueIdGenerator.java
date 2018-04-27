@@ -82,7 +82,7 @@ public class UniqueIdGenerator {
       }
       timeMillis = now;
     } else {
-      throw new RuntimeException("Time reversal ??");
+      throw new TimeReversalException();
     }
   }
 
