@@ -1,4 +1,4 @@
-# Struqt Utilities Benchmarks [![Maven Central](https://img.shields.io/badge/maven-1.0.2-blue.svg)](http://repo1.maven.org/maven2/com/struqt/struqt-util-benchmark/)
+# Struqt Utilities Benchmarks [![Maven Central](https://img.shields.io/badge/maven-1.0.3-blue.svg)](http://repo1.maven.org/maven2/com/struqt/struqt-util-benchmark/)
 
 How to build
 ------------

@@ -1,6 +1,7 @@
 Struqt Utilities
 ================
 
+[![Maven Central](https://img.shields.io/badge/maven-1.0.3-blue.svg)](http://repo1.maven.org/maven2/com/struqt/struqt-utilities/)
 [![License](https://img.shields.io/github/license/struqt/struqt-utilities.svg)](https://raw.githubusercontent.com/struqt/struqt-utilities/release/1.0/LICENSE)
 [![Build Status](https://travis-ci.org/struqt/struqt-utilities.svg?branch=release/1.0)](https://travis-ci.org/struqt/struqt-utilities)
 [![Coverage Status](https://coveralls.io/repos/github/struqt/struqt-utilities/badge.svg?branch=release/1.0)](https://coveralls.io/github/struqt/struqt-utilities?branch=release/1.0)

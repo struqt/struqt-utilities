@@ -1,4 +1,4 @@
-# Struqt Unique ID [![Maven Central](https://img.shields.io/badge/maven-1.0.2-blue.svg)](http://repo1.maven.org/maven2/com/struqt/struqt-unique-id/)
+# Struqt Unique ID [![Maven Central](https://img.shields.io/badge/maven-1.0.3-blue.svg)](http://repo1.maven.org/maven2/com/struqt/struqt-unique-id/)
 
 Unique ID generator inspired by Twitter's Snowflake
 
@@ -12,7 +12,7 @@ Add the following dependency element into pom.xml
 <dependency>
   <groupId>com.struqt</groupId>
   <artifactId>struqt-unique-id</artifactId>
-  <version>1.0.2</version>
+  <version>1.0.3</version>
 </dependency>
 ```
 
