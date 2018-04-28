@@ -10,8 +10,7 @@ matrix:
 
 branches:
   only:
-    - master
-    - 1.0
+    - release/*
 
 cache:
   directories:
