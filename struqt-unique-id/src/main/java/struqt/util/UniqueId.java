@@ -5,6 +5,16 @@
 
 package struqt.util;
 
+/**
+ * Provide UniqueId data definition and some helper static method with a default encode and decode
+ * rules.
+ *
+ * <p>The default UniqueIdCodec use 43 bits to present timestamp, 9 bits to present a distributed
+ * instance id, and 11 bits to present a sequence number.
+ *
+ * @author wangkang
+ * @since 1.0
+ */
 public class UniqueId {
 
   private static final UniqueIdCodec CODEC = new UniqueIdCodec(43L, 9L);

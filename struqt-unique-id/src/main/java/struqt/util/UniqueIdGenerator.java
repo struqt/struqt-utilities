@@ -9,10 +9,10 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * Another distributed unique ID generator inspired by Twitter's Snowflake.
+ * Unique ID generator inspired by Twitter's Snowflake.
  *
  * @author wangkang
- * @version 1.0
+ * @since 1.0
  */
 public class UniqueIdGenerator {
 

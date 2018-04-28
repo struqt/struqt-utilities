@@ -1,5 +1,4 @@
-Struqt Utilities Benchmarks
-===========================
+# Struqt Utilities Benchmarks [![Maven Central](https://img.shields.io/maven-central/v/com.struqt/struqt-util-benchmark.svg)](https://maven-badges.herokuapp.com/maven-central/com.struqt/struqt-util-benchmark)
 
 How to build
 ------------

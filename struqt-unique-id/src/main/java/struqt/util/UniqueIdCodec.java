@@ -5,6 +5,12 @@
 
 package struqt.util;
 
+/**
+ * Unique ID encode and decode rules implementation class.
+ *
+ * @author wangkang
+ * @since 1.0
+ */
 public final class UniqueIdCodec {
 
   private final long instanceShift;
