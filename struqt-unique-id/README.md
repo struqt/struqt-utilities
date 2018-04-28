@@ -1,5 +1,4 @@
-Struqt Unique ID
-================
+# Struqt Unique ID [![Maven Central](https://img.shields.io/badge/maven-1.0.2-blue.svg)](http://repo1.maven.org/maven2/com/struqt/struqt-unique-id/)
 
 Unique ID generator inspired by Twitter's Snowflake
 
