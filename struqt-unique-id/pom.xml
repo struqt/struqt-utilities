@@ -10,7 +10,7 @@
 
   <artifactId>struqt-unique-id</artifactId>
   <name>Struqt Unique ID</name>
-  <description>Another distributed unique ID generator inspired by Twitter's Snowflake</description>
+  <description>Unique ID generator inspired by Twitter's Snowflake</description>
 
   <properties>
     <main.java.version>6</main.java.version>
