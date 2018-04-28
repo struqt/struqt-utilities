@@ -1,4 +1,5 @@
 language: java
+sudo: false
 
 jdk:
   - openjdk8
@@ -8,15 +9,16 @@ matrix:
   allow_failures:
     - jdk: oraclejdk9
 
-branches:
-  only:
-    - master
-
 cache:
   directories:
     - .autoconf
     - $HOME/.m2
 
+branches:
+  only:
+    - master
+
 after_success:
   - mvn clean test -Pcoveralls jacoco:report coveralls:report
   - cd struqt-unique-id && mvn com.gavinmogan:codacy-maven-plugin:coverage -DcoverageReportFile=target/site/jacoco/jacoco.xml -DapiToken= -DprojectToken=${CODACY_PROJECT_TOKEN} && cd ..
+  - bash <(curl -s https://codecov.io/bash)
