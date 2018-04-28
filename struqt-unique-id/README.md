@@ -12,7 +12,7 @@ Add the following dependency element into pom.xml
 <dependency>
   <groupId>com.struqt</groupId>
   <artifactId>struqt-unique-id</artifactId>
-  <version>1.0.2</version>
+  <version>1.0.3</version>
 </dependency>
 ```
 

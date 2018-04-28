@@ -3,6 +3,7 @@ Struqt Utilities
 
 Java utilities class libraries
 
+[![Maven Central](https://img.shields.io/maven-central/v/com.struqt/struqt-utilities.svg)](https://maven-badges.herokuapp.com/maven-central/com.struqt/struqt-utilities)
 [![License](https://img.shields.io/github/license/struqt/struqt-utilities.svg)](https://raw.githubusercontent.com/struqt/struqt-utilities/develop/LICENSE)
 [![Build Status](https://travis-ci.org/struqt/struqt-utilities.svg?branch=develop)](https://travis-ci.org/struqt/struqt-utilities)
 [![Coverage Status](https://coveralls.io/repos/github/struqt/struqt-utilities/badge.svg?branch=develop)](https://coveralls.io/github/struqt/struqt-utilities?branch=develop)
