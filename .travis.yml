@@ -10,7 +10,7 @@ matrix:
 
 branches:
   only:
-    - release/*
+    - release/1.0
 
 cache:
   directories:
