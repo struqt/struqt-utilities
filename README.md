@@ -16,4 +16,4 @@ Java utilities class libraries
 | Name               | Description        |
 |--------------------|--------------------|
 |[struqt-util-benchmark](/struqt-util-benchmark)|Performance benchmark tests|
-|[struqt-unique-id](/struqt-unique-id)|Distributed unique ID generator inspired by Twitter's Snowflake|
+|[struqt-unique-id](/struqt-unique-id)|Unique ID generator inspired by Twitter's Snowflake|

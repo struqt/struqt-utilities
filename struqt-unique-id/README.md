@@ -11,9 +11,9 @@ Add the following dependency element into pom.xml
 
 ```xml
 <dependency>
-    <groupId>com.struqt</groupId>
-    <artifactId>struqt-unique-id</artifactId>
-    <version>1.0.2</version>
+  <groupId>com.struqt</groupId>
+  <artifactId>struqt-unique-id</artifactId>
+  <version>1.0.2</version>
 </dependency>
 ```
 
@@ -28,8 +28,8 @@ Prepare the following requirement:
 * Latest stable [Apache Maven](http://maven.apache.org/)
 
 > Note:
-> * JRE 6 or upper is OK for runtime dependency
-> * JDK 8 is just build-time requirement
+> * JRE 6 or upper is fine as runtime requirement
+> * JDK 8 is just as build-time requirement
 
 Build with Maven command:
 

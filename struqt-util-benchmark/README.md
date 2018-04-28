@@ -21,4 +21,4 @@ How to run
 java -jar target/jmh-struqt-util-benchmark-?VERSION?.jar
 ```
 
-> Note: The value of `?VERSION?` depoends on the version of your work copy
+> Note: The value of `?VERSION?` depends on the version of your work copy
