@@ -1,4 +1,6 @@
-# Struqt Unique ID [![Maven Central](https://img.shields.io/maven-central/v/com.struqt/struqt-unique-id.svg)](https://maven-badges.herokuapp.com/maven-central/com.struqt/struqt-unique-id)
+# Struqt Unique ID
+[![Maven Central](https://img.shields.io/maven-central/v/com.struqt/struqt-unique-id.svg)](https://maven-badges.herokuapp.com/maven-central/com.struqt/struqt-unique-id)
+[![Javadocs](https://javadoc.io/badge/com.struqt/struqt-unique-id.svg?color=yellow)](https://javadoc.io/doc/com.struqt/struqt-unique-id)
 
 Unique ID generator inspired by Twitter's Snowflake
 
