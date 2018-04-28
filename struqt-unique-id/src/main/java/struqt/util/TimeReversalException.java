@@ -5,4 +5,11 @@
 
 package struqt.util;
 
+/**
+ * When fetching current timestamp several times, if later timestamp is smaller than previous
+ * timestamp, this exception can be thrown.
+ *
+ * @author wangkang
+ * @since 1.0
+ */
 public class TimeReversalException extends RuntimeException {}
