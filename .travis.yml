@@ -11,7 +11,6 @@ matrix:
 branches:
   only:
     - master
-    - 1.0
 
 cache:
   directories:
