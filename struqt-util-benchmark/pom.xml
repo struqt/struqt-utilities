@@ -8,6 +8,8 @@
   <packaging>jar</packaging>
   <artifactId>struqt-util-benchmark</artifactId>
   <name>Struqt Utilities Benchmarks</name>
+  <description>Benchmark tests with JMH</description>
+
   <build>
     <plugins>
       <plugin>
