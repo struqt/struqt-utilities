@@ -14,6 +14,7 @@ package struqt.util;
 public class Base64 {
 
   private static final char[] EMPTY_CHARS = new char[0];
+  private static final char[] LINE_SEPARATOR = new char[] {'\r', '\n'};
   private static final char ALPHABET_PAD = '=';
   private static final char[] ALPHABET_BASIC = {
     'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
@@ -102,7 +103,7 @@ public class Base64 {
       int paddingCount = remains == 1 ? 2 : remains == 2 ? 1 : 0;
       charCount -= paddingCount;
     }
-    int lineWidth = wrap * 4;
+    int lineWidth = wrap << 2;
     int lineCount = lineWidth <= 0 ? 0 : charCount / lineWidth;
     if (charCount > lineWidth * lineCount) {
       lineCount++;
@@ -110,6 +111,8 @@ public class Base64 {
     if (lineCount > 1) {
       charCount += ((lineCount - 1) << 1);
     }
+    boolean multiLine = wrap > 0 && lineCount > 1;
+    int iWrap = 0;
     int line = 0;
     char[] chars = new char[charCount];
     int bytesOffset;
@@ -118,13 +121,13 @@ public class Base64 {
       bytesOffset = i * 3;
       charsOffset = (i << 2) + (line << 1);
       encode24Bits(chars, charsOffset, bytes, bytesOffset, 3, alphabet, padding);
-      if (wrap > 0 && lineCount > 1 && (line + 1) < lineCount) {
-        int t = (i + 1);
-        int c = t / wrap;
-        if (c * wrap == t) {
-          chars[charsOffset + 4] = '\r';
-          chars[charsOffset + 5] = '\n';
+      if (multiLine && (line + 1) < lineCount) {
+        iWrap++;
+        if (iWrap == wrap) {
+          chars[charsOffset + 4] = LINE_SEPARATOR[0];
+          chars[charsOffset + 5] = LINE_SEPARATOR[1];
           line++;
+          iWrap = 0;
         }
       }
     }

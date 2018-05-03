@@ -17,15 +17,15 @@ import org.openjdk.jmh.annotations.Warmup;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
-@BenchmarkMode(Mode.AverageTime)
-@Warmup(iterations = 5)
-@Measurement(iterations = 8, time = 3)
+@BenchmarkMode(Mode.SampleTime)
+@Warmup(iterations = 10)
+@Measurement(iterations = 10, time = 2)
 @Threads(1)
 @Fork(1)
-@OutputTimeUnit(TimeUnit.MILLISECONDS)
+@OutputTimeUnit(TimeUnit.MICROSECONDS)
 public class MeasureBase64 {
 
-  private static final byte[] bytes = new byte[5 * 1024];
+  private static final byte[] bytes = new byte[1024];
 
   static {
     new Random().nextBytes(bytes);
