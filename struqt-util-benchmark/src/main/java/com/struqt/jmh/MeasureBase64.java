@@ -14,6 +14,7 @@ import org.openjdk.jmh.annotations.OutputTimeUnit;
 import org.openjdk.jmh.annotations.Threads;
 import org.openjdk.jmh.annotations.Warmup;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -25,10 +26,40 @@ import java.util.concurrent.TimeUnit;
 @OutputTimeUnit(TimeUnit.MICROSECONDS)
 public class MeasureBase64 {
 
-  private static final byte[] bytes = new byte[1024];
+  private static final byte[] bytes = new byte[4096];
+  private static final String encoded;
+  private static final byte[] encodedBytes;
+  private static final String encodedUrlSafe;
+  private static final String encodedMime;
 
   static {
     new Random().nextBytes(bytes);
+    encoded = java.util.Base64.getEncoder().encodeToString(bytes);
+    encodedUrlSafe = java.util.Base64.getUrlEncoder().encodeToString(bytes);
+    encodedMime = java.util.Base64.getMimeEncoder().encodeToString(bytes);
+    encodedBytes = encoded.getBytes(StandardCharsets.US_ASCII);
+  }
+
+  @Benchmark
+  public void decode() {
+    struqt.util.Base64.decode(encodedBytes);
+  }
+
+  @Benchmark
+  public void decodeJava8() {
+    java.util.Base64.getDecoder().decode(encodedBytes);
+  }
+
+  // /*
+
+  @Benchmark
+  public void decodeMime() {
+    struqt.util.Base64.decode(encodedMime);
+  }
+
+  @Benchmark
+  public void decodeMimeJava8() {
+    java.util.Base64.getMimeDecoder().decode(encodedMime);
   }
 
   @Benchmark
@@ -60,4 +91,5 @@ public class MeasureBase64 {
   public void encodeMimeJava8() {
     java.util.Base64.getMimeEncoder().encodeToString(bytes);
   }
+  // */
 }

@@ -1,5 +1,6 @@
 package struqt.test;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -11,6 +12,7 @@ import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@DisplayName("Base 64 Encoding Test")
 class Base64Test {
 
   // private static final Logger log = LoggerFactory.getLogger(Base64Test.class);
@@ -44,7 +46,7 @@ class Base64Test {
     int padCount = tailCount == 1 ? 2 : tailCount == 2 ? 1 : 0;
     expect = expect.substring(0, expect.length() - padCount);
     // log.info(expect);
-    assertEquals(expect, String.valueOf(Base64.encodeToChars(bytes, false)));
+    assertEquals(expect, String.valueOf(Base64.encode(bytes, false, false, false)));
   }
 
   @ParameterizedTest
