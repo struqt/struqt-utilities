@@ -8,7 +8,8 @@ package struqt.util;
 import java.util.Arrays;
 
 /**
- * Base64 implementation specified in <a href="https://tools.ietf.org/html/rfc4648">RFC 4648</a>
+ * Base64 codec implementation as <a href="https://tools.ietf.org/html/rfc2045#section-6.8">RFC
+ * 2045</a> and <a href="https://tools.ietf.org/html/rfc4648">RFC 4648</a> specified.
  *
  * @author wangkang
  * @since 1.1
@@ -48,6 +49,7 @@ public class Base64 {
    *
    * @param s Base 64 encoded String
    * @return Byte array as output
+   * @since 1.1
    */
   public static byte[] decode(final CharSequence s) {
     if (s == null) {
@@ -61,6 +63,7 @@ public class Base64 {
    *
    * @param bytes Base 64 encoded bytes
    * @return Byte array as output
+   * @since 1.1
    */
   public static byte[] decode(final byte[] bytes) {
     if (bytes == null || bytes.length <= 0) {
@@ -74,6 +77,7 @@ public class Base64 {
    *
    * @param chars Base 64 encoded char array
    * @return Byte array as output
+   * @since 1.1
    */
   public static byte[] decode(final char[] chars) {
     if (chars == null || chars.length <= 0) {
@@ -88,6 +92,7 @@ public class Base64 {
    *
    * @param bytes Byte array as input
    * @return Base64 encoded String as output
+   * @since 1.1
    */
   public static String encodeToString(byte[] bytes) {
     return String.valueOf(encode(bytes, false, false, true));
@@ -99,6 +104,7 @@ public class Base64 {
    *
    * @param bytes Byte array as input
    * @return Base64 encoded String as output
+   * @since 1.1
    */
   public static String encodeToUrlSafe(byte[] bytes) {
     return String.valueOf(encode(bytes, true, false, true));
@@ -114,6 +120,7 @@ public class Base64 {
    *
    * @param bytes Byte array as input
    * @return Base64 encoded String as output
+   * @since 1.1
    */
   public static String encodeToMime(byte[] bytes) {
     return String.valueOf(encode(bytes, false, true, true));
@@ -128,6 +135,7 @@ public class Base64 {
    * @param mime RFC 2045 specified multi-line Base 64 encoding
    * @param padding Whether fill the padding character in the end of output
    * @return Base64 encoded String as output
+   * @since 1.1
    */
   public static char[] encode(byte[] bytes, boolean url, boolean mime, boolean padding) {
     if (url) {
