@@ -2,7 +2,7 @@
   <parent>
     <artifactId>struqt-utilities</artifactId>
     <groupId>com.struqt</groupId>
-    <version>1.1.0-SNAPSHOT</version>
+    <version>1.2.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <packaging>jar</packaging>
@@ -122,6 +122,12 @@
     <dependency>
       <groupId>com.struqt</groupId>
       <artifactId>struqt-unique-id</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.struqt</groupId>
+      <artifactId>struqt-base64</artifactId>
       <version>${project.version}</version>
       <scope>compile</scope>
     </dependency>
