@@ -297,12 +297,10 @@ public class Base64 {
       this.bytes = bytes;
     }
 
-    @Override
     public int size() {
       return bytes.length;
     }
 
-    @Override
     public int byteAt(int i) {
       return bytes[i];
     }
@@ -316,12 +314,10 @@ public class Base64 {
       this.chars = chars;
     }
 
-    @Override
     public int size() {
       return chars.length;
     }
 
-    @Override
     public int byteAt(int i) {
       return chars[i];
     }
@@ -335,12 +331,10 @@ public class Base64 {
       this.chars = chars;
     }
 
-    @Override
     public int size() {
       return chars.length();
     }
 
-    @Override
     public int byteAt(int i) {
       return chars.charAt(i);
     }

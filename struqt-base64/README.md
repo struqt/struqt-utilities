@@ -29,7 +29,7 @@ Prepare the following requirement:
 * Latest stable [Apache Maven](http://maven.apache.org/)
 
 > Note:
-> * JRE 6 or upper is fine as runtime requirement
+> * JRE 1.4 or upper is fine as runtime requirement
 > * JDK 8 is just as build-time requirement
 
 Build with Maven command:

@@ -66,7 +66,6 @@ public class UniqueId {
     return value;
   }
 
-  @Override
   public boolean equals(final Object o) {
     if (this == o) {
       return true;
@@ -78,12 +77,10 @@ public class UniqueId {
     return getValue() == uniqueId.getValue();
   }
 
-  @Override
   public int hashCode() {
     return Long.valueOf(getValue()).hashCode();
   }
 
-  @Override
   public String toString() {
     return "UniqueId{"
         + "value="
