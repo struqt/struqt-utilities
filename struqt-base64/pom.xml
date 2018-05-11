@@ -21,30 +21,12 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>default-compile</id>
-            <phase>compile</phase>
-            <goals>
-              <goal>compile</goal>
-            </goals>
-            <configuration>
-              <source>${main.java.version}</source>
-              <target>${main.java.version}</target>
-            </configuration>
-          </execution>
-          <execution>
-            <id>default-testCompile</id>
-            <phase>test-compile</phase>
-            <goals>
-              <goal>testCompile</goal>
-            </goals>
-            <configuration>
-              <source>${test.java.version}</source>
-              <target>${test.java.version}</target>
-            </configuration>
-          </execution>
-        </executions>
+        <configuration>
+          <source>${main.java.version}</source>
+          <target>${main.java.version}</target>
+          <testSource>${test.java.version}</testSource>
+          <testTarget>${test.java.version}</testTarget>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.jacoco</groupId>
@@ -69,19 +51,10 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-compiler-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>default-compile</id>
-                <phase>compile</phase>
-                <goals>
-                  <goal>compile</goal>
-                </goals>
-                <configuration>
-                  <source>${test.java.version}</source>
-                  <target>${test.java.version}</target>
-                </configuration>
-              </execution>
-            </executions>
+            <configuration>
+              <source>${test.java.version}</source>
+              <target>${test.java.version}</target>
+            </configuration>
           </plugin>
         </plugins>
       </build>
