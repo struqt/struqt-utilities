@@ -20,6 +20,10 @@
           <compilerVersion>${javac.target}</compilerVersion>
           <source>${javac.target}</source>
           <target>${javac.target}</target>
+          <encoding>${project.build.sourceEncoding}</encoding>
+          <optimize>true</optimize>
+          <showDeprecation>true</showDeprecation>
+          <showWarnings>true</showWarnings>
         </configuration>
       </plugin>
       <plugin>
