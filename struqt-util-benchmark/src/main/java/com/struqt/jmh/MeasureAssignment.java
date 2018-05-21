@@ -21,14 +21,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 
 /**
- * Field assignment benchmarks with MethodHandle since Java 7.
- *
- * <p>Read more:
- *
- * <ul>
- *   <li><a href="https://jcp.org/en/jsr/detail?id=292">JSR 292</a>
- *   <li><a href="https://gist.github.com/raphw/881e1745996f9d314ab0">FieldBenchmark.java</a>
- * </ul>
+ * Field assignment benchmarks with MethodHandle since Java 7 and LambdaMetafactory since Java 8.
  *
  * <p>Benchmark Test Results:
  *
@@ -52,6 +45,15 @@ import java.util.function.BiConsumer;
  * MeasureAssignment.test401Lambda                    avgt    3   7.026 ± 1.693  ns/op
  * MeasureAssignment.test402LambdaSwitch              avgt    3  14.566 ± 2.882  ns/op
  * </pre>
+ *
+ * <p>Read more:
+ *
+ * <ul>
+ *   <li><a href="https://jcp.org/en/jsr/detail?id=292">JSR 292</a>
+ *   <li><a href="https://gist.github.com/raphw/881e1745996f9d314ab0">FieldBenchmark.java</a>
+ *   <li><a href="https://www.optaplanner.org/blog/2018/01/09/JavaReflectionButMuchFaster.html">Java
+ *       Reflection, but much faster</a>
+ * </ul>
  *
  * @see java.lang.invoke.MethodHandle
  */
@@ -210,7 +212,7 @@ public class MeasureAssignment {
       private static final MethodHandle parentSetter;
       private static final MethodHandle childrenSetter;
 
-      static void setObject(MockData data, String field, Object value) throws Throwable {
+      private static void setObject(MockData data, String field, Object value) throws Throwable {
         int hash = field.hashCode();
         switch (hash) {
           case 556050114:
