@@ -8,8 +8,11 @@ import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 import org.openjdk.jmh.runner.options.TimeValue;
 
+import java.lang.invoke.CallSite;
+import java.lang.invoke.LambdaMetafactory;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -17,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.function.BiConsumer;
 
 /**
  * Field assignment benchmarks with MethodHandle since Java 7.
@@ -39,14 +43,16 @@ import java.util.concurrent.TimeUnit;
  * # Threads: 1 thread, will synchronize iterations
  * # Benchmark mode: Average time, time/op
  *
- * Benchmark                             Mode  Cnt   Score    Error  Units
- * MeasureAssignment._101_DirectField    avgt    3   6.717 ±  1.237  ns/op
- * MeasureAssignment._102_DirectSetter   avgt    3   6.937 ±  1.293  ns/op
- * MeasureAssignment._201_InvokeExact    avgt    3   7.138 ±  0.291  ns/op
- * MeasureAssignment._202_Invoke         avgt    3   7.089 ±  0.796  ns/op
- * MeasureAssignment._203_InvokeSwitch   avgt    3  14.504 ±  0.953  ns/op
- * MeasureAssignment._301_ReflectField   avgt    3  30.435 ± 13.630  ns/op
- * MeasureAssignment._302_ReflectMethod  avgt    3  59.395 ±  8.325  ns/op
+ * Benchmark                                        Mode  Cnt   Score    Error  Units
+ * MeasureAssignment._101_DirectField               avgt    3   6.586 ±  1.896  ns/op
+ * MeasureAssignment._102_DirectSetter              avgt    3   6.873 ±  3.012  ns/op
+ * MeasureAssignment._201_MethodHandleInvokeExact   avgt    3   7.668 ±  1.745  ns/op
+ * MeasureAssignment._202_MethodHandleInvoke        avgt    3   7.164 ±  1.005  ns/op
+ * MeasureAssignment._203_MethodHandleInvokeSwitch  avgt    3  14.829 ±  5.657  ns/op
+ * MeasureAssignment._301_ReflectField              avgt    3  30.758 ± 11.503  ns/op
+ * MeasureAssignment._302_ReflectMethod             avgt    3  59.479 ± 26.046  ns/op
+ * MeasureAssignment._401_Lambda                    avgt    3   7.067 ±  0.645  ns/op
+ * MeasureAssignment._402_LambdaSwitch              avgt    3  14.821 ±  4.873  ns/op
  * </pre>
  *
  * @see java.lang.invoke.MethodHandle
@@ -95,7 +101,7 @@ public class MeasureAssignment {
   }
 
   @Benchmark
-  public MockData _201_InvokeExact() throws Throwable {
+  public MockData _201_MethodHandleInvokeExact() throws Throwable {
     MockData data = new MockData();
     MockData.Assignment.intValueSetter.invokeExact(data, 99);
     MockData.Assignment.boolValueSetter.invokeExact(data, true);
@@ -106,7 +112,7 @@ public class MeasureAssignment {
   }
 
   @Benchmark
-  public MockData _202_Invoke() throws Throwable {
+  public MockData _202_MethodHandleInvoke() throws Throwable {
     MockData data = new MockData();
     MockData.Assignment.intValueSetter.invoke(data, 99);
     MockData.Assignment.boolValueSetter.invoke(data, true);
@@ -117,7 +123,7 @@ public class MeasureAssignment {
   }
 
   @Benchmark
-  public MockData _203_InvokeSwitch() throws Throwable {
+  public MockData _203_MethodHandleInvokeSwitch() throws Throwable {
     MockData data = new MockData();
     MockData.Assignment.setObject(data, "intValue", 98);
     MockData.Assignment.setObject(data, "boolValue", true);
@@ -146,6 +152,28 @@ public class MeasureAssignment {
     MockData.Assignment3.doubleValueSetterM.invoke(data, 1.23);
     MockData.Assignment3.parentSetterM.invoke(data, parent);
     MockData.Assignment3.childrenSetterM.invoke(data, children);
+    return data;
+  }
+
+  @Benchmark
+  public MockData _401_Lambda() {
+    MockData data = new MockData();
+    MockData.Assignment4.intValueSetterFunc.accept(data, 99);
+    MockData.Assignment4.boolValueSetterFunc.accept(data, true);
+    MockData.Assignment4.doubleValueSetterFunc.accept(data, 1.23);
+    MockData.Assignment4.parentSetterFunc.accept(data, parent);
+    MockData.Assignment4.childrenSetterFunc.accept(data, children);
+    return data;
+  }
+
+  @Benchmark
+  public MockData _402_LambdaSwitch() {
+    MockData data = new MockData();
+    MockData.Assignment4.setObject(data, "intValue", 98);
+    MockData.Assignment4.setObject(data, "boolValue", true);
+    MockData.Assignment4.setObject(data, "doubleValue", 1.23);
+    MockData.Assignment4.setObject(data, "parent", parent);
+    MockData.Assignment4.setObject(data, "children", children);
     return data;
   }
 
@@ -267,9 +295,69 @@ public class MeasureAssignment {
           doubleValueSetterM = MockData.class.getDeclaredMethod("setDoubleValue", double.class);
           parentSetterM = MockData.class.getDeclaredMethod("setParent", MockData.class);
           childrenSetterM = MockData.class.getDeclaredMethod("setChildren", List.class);
-        } catch (NoSuchMethodException e) {
+        } catch (Throwable e) {
           throw new IllegalStateException(e);
         }
+      }
+    }
+
+    static class Assignment4 {
+
+      static final BiConsumer<MockData, Object> intValueSetterFunc;
+      static final BiConsumer<MockData, Object> boolValueSetterFunc;
+      static final BiConsumer<MockData, Object> doubleValueSetterFunc;
+      static final BiConsumer<MockData, Object> parentSetterFunc;
+      static final BiConsumer<MockData, Object> childrenSetterFunc;
+
+      static void setObject(MockData data, String field, Object value) {
+        int hash = field.hashCode();
+        switch (hash) {
+          case 556050114:
+            intValueSetterFunc.accept(data, value);
+            break;
+          case 2044569767:
+            boolValueSetterFunc.accept(data, value);
+            break;
+          case -1626611680:
+            doubleValueSetterFunc.accept(data, value);
+            break;
+          case -995424086:
+            parentSetterFunc.accept(data, value);
+            break;
+          case 1659526655:
+            childrenSetterFunc.accept(data, value);
+            break;
+          default:
+            break;
+        }
+      }
+
+      static {
+        try {
+          MethodHandles.Lookup lookup = MethodHandles.lookup();
+          intValueSetterFunc = makeCallSite(lookup, "setIntValue", int.class);
+          boolValueSetterFunc = makeCallSite(lookup, "setBoolValue", boolean.class);
+          doubleValueSetterFunc = makeCallSite(lookup, "setDoubleValue", double.class);
+          parentSetterFunc = makeCallSite(lookup, "setParent", MockData.class);
+          childrenSetterFunc = makeCallSite(lookup, "setChildren", List.class);
+        } catch (Throwable e) {
+          throw new IllegalStateException(e);
+        }
+      }
+
+      @SuppressWarnings("all")
+      private static BiConsumer<MockData, Object> makeCallSite(
+          MethodHandles.Lookup lookup, String setterName, Class<?> setterClass) throws Throwable {
+        CallSite callsite =
+            LambdaMetafactory.metafactory(
+                lookup,
+                "accept",
+                MethodType.methodType(BiConsumer.class),
+                MethodType.methodType(void.class, Object.class, Object.class),
+                lookup.findVirtual(
+                    MockData.class, setterName, MethodType.methodType(void.class, setterClass)),
+                MethodType.methodType(void.class, MockData.class, setterClass));
+        return (BiConsumer) callsite.getTarget().invokeExact();
       }
     }
   }
