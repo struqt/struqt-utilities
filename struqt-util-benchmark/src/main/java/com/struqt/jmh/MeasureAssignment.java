@@ -16,9 +16,7 @@ import java.lang.invoke.MethodType;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 
@@ -44,15 +42,15 @@ import java.util.function.BiConsumer;
  * # Benchmark mode: Average time, time/op
  *
  * Benchmark                                        Mode  Cnt   Score    Error  Units
- * MeasureAssignment._101_DirectField               avgt    3   6.586 ±  1.896  ns/op
- * MeasureAssignment._102_DirectSetter              avgt    3   6.873 ±  3.012  ns/op
- * MeasureAssignment._201_MethodHandleInvokeExact   avgt    3   7.668 ±  1.745  ns/op
- * MeasureAssignment._202_MethodHandleInvoke        avgt    3   7.164 ±  1.005  ns/op
- * MeasureAssignment._203_MethodHandleInvokeSwitch  avgt    3  14.829 ±  5.657  ns/op
- * MeasureAssignment._301_ReflectField              avgt    3  30.758 ± 11.503  ns/op
- * MeasureAssignment._302_ReflectMethod             avgt    3  59.479 ± 26.046  ns/op
- * MeasureAssignment._401_Lambda                    avgt    3   7.067 ±  0.645  ns/op
- * MeasureAssignment._402_LambdaSwitch              avgt    3  14.821 ±  4.873  ns/op
+ * MeasureAssignment._101_DirectField               avgt    3   6.745 ± 0.704  ns/op
+ * MeasureAssignment._102_DirectSetter              avgt    3   6.750 ± 0.921  ns/op
+ * MeasureAssignment._201_MethodHandleInvokeExact   avgt    3   7.255 ± 0.959  ns/op
+ * MeasureAssignment._202_MethodHandleInvoke        avgt    3   7.214 ± 0.943  ns/op
+ * MeasureAssignment._203_MethodHandleInvokeSwitch  avgt    3  14.636 ± 0.298  ns/op
+ * MeasureAssignment._301_ReflectField              avgt    3  29.900 ± 1.919  ns/op
+ * MeasureAssignment._302_ReflectMethod             avgt    3  57.356 ± 6.470  ns/op
+ * MeasureAssignment._401_Lambda                    avgt    3   7.214 ± 0.527  ns/op
+ * MeasureAssignment._402_LambdaSwitch              avgt    3  14.668 ± 0.804  ns/op
  * </pre>
  *
  * @see java.lang.invoke.MethodHandle
@@ -177,35 +175,35 @@ public class MeasureAssignment {
     return data;
   }
 
-  public static class MockData {
+  private static class MockData {
 
-    int intValue;
-    boolean boolValue;
-    double doubleValue;
-    MockData parent;
-    List<MockData> children;
+    public int intValue;
+    public boolean boolValue;
+    public double doubleValue;
+    public MockData parent;
+    public List<MockData> children;
 
-    void setIntValue(int intValue) {
+    public final void setIntValue(int intValue) {
       this.intValue = intValue;
     }
 
-    void setBoolValue(boolean boolValue) {
+    public final void setBoolValue(boolean boolValue) {
       this.boolValue = boolValue;
     }
 
-    void setDoubleValue(double doubleValue) {
+    public final void setDoubleValue(double doubleValue) {
       this.doubleValue = doubleValue;
     }
 
-    void setParent(MockData parent) {
+    public final void setParent(MockData parent) {
       this.parent = parent;
     }
 
-    void setChildren(List<MockData> children) {
+    public final void setChildren(List<MockData> children) {
       this.children = children;
     }
 
-    abstract static class Assignment {
+    private abstract static class Assignment {
 
       static void setObject(MockData data, String field, Object value) throws Throwable {
         int hash = field.hashCode();
@@ -230,13 +228,11 @@ public class MeasureAssignment {
         }
       }
 
-      static final MethodHandle intValueSetter;
-      static final MethodHandle boolValueSetter;
-      static final MethodHandle doubleValueSetter;
-      static final MethodHandle parentSetter;
-      static final MethodHandle childrenSetter;
-
-      static final Map<String, Integer> fieldHashCodes = new HashMap<>();
+      private static final MethodHandle intValueSetter;
+      private static final MethodHandle boolValueSetter;
+      private static final MethodHandle doubleValueSetter;
+      private static final MethodHandle parentSetter;
+      private static final MethodHandle childrenSetter;
 
       static {
         MethodHandles.Lookup lookup = MethodHandles.lookup();
@@ -246,20 +242,13 @@ public class MeasureAssignment {
           doubleValueSetter = lookup.findSetter(MockData.class, "doubleValue", double.class);
           parentSetter = lookup.findSetter(MockData.class, "parent", MockData.class);
           childrenSetter = lookup.findSetter(MockData.class, "children", List.class);
-
-          fieldHashCodes.put("intValue", "intValue".hashCode());
-          fieldHashCodes.put("boolValue", "boolValue".hashCode());
-          fieldHashCodes.put("doubleValue", "doubleValue".hashCode());
-          fieldHashCodes.put("parent", "parent".hashCode());
-          fieldHashCodes.put("children", "children".hashCode());
-
         } catch (NoSuchFieldException | IllegalAccessException e) {
           throw new IllegalStateException(e);
         }
       }
     }
 
-    static class Assignment2 {
+    private static class Assignment2 {
 
       static final Field intValueSetterF;
       static final Field boolValueSetterF;
@@ -280,7 +269,7 @@ public class MeasureAssignment {
       }
     }
 
-    static class Assignment3 {
+    private static class Assignment3 {
 
       static final Method intValueSetterM;
       static final Method boolValueSetterM;
@@ -301,15 +290,15 @@ public class MeasureAssignment {
       }
     }
 
-    static class Assignment4 {
+    private static class Assignment4 {
 
-      static final BiConsumer<MockData, Object> intValueSetterFunc;
-      static final BiConsumer<MockData, Object> boolValueSetterFunc;
-      static final BiConsumer<MockData, Object> doubleValueSetterFunc;
-      static final BiConsumer<MockData, Object> parentSetterFunc;
-      static final BiConsumer<MockData, Object> childrenSetterFunc;
+      private static final BiConsumer<MockData, Object> intValueSetterFunc;
+      private static final BiConsumer<MockData, Object> boolValueSetterFunc;
+      private static final BiConsumer<MockData, Object> doubleValueSetterFunc;
+      private static final BiConsumer<MockData, Object> parentSetterFunc;
+      private static final BiConsumer<MockData, Object> childrenSetterFunc;
 
-      static void setObject(MockData data, String field, Object value) {
+      private static void setObject(MockData data, String field, Object value) {
         int hash = field.hashCode();
         switch (hash) {
           case 556050114:
@@ -345,7 +334,7 @@ public class MeasureAssignment {
         }
       }
 
-      @SuppressWarnings("all")
+      @SuppressWarnings("unchecked")
       private static BiConsumer<MockData, Object> makeCallSite(
           MethodHandles.Lookup lookup, String setterName, Class<?> setterClass) throws Throwable {
         CallSite callsite =
@@ -357,7 +346,7 @@ public class MeasureAssignment {
                 lookup.findVirtual(
                     MockData.class, setterName, MethodType.methodType(void.class, setterClass)),
                 MethodType.methodType(void.class, MockData.class, setterClass));
-        return (BiConsumer) callsite.getTarget().invokeExact();
+        return (BiConsumer<MockData, Object>) callsite.getTarget().invokeExact();
       }
     }
   }
