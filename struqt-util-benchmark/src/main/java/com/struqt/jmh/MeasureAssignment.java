@@ -42,21 +42,24 @@ import java.util.function.BiConsumer;
  * # Benchmark mode: Average time, time/op
  *
  * Benchmark                                        Mode  Cnt   Score    Error  Units
- * MeasureAssignment._101_DirectField               avgt    3   6.745 ± 0.704  ns/op
- * MeasureAssignment._102_DirectSetter              avgt    3   6.750 ± 0.921  ns/op
- * MeasureAssignment._201_MethodHandleInvokeExact   avgt    3   7.255 ± 0.959  ns/op
- * MeasureAssignment._202_MethodHandleInvoke        avgt    3   7.214 ± 0.943  ns/op
- * MeasureAssignment._203_MethodHandleInvokeSwitch  avgt    3  14.636 ± 0.298  ns/op
- * MeasureAssignment._301_ReflectField              avgt    3  29.900 ± 1.919  ns/op
- * MeasureAssignment._302_ReflectMethod             avgt    3  57.356 ± 6.470  ns/op
- * MeasureAssignment._401_Lambda                    avgt    3   7.214 ± 0.527  ns/op
- * MeasureAssignment._402_LambdaSwitch              avgt    3  14.668 ± 0.804  ns/op
+ * MeasureAssignment.test101DirectField               avgt    3   6.544 ± 1.343  ns/op
+ * MeasureAssignment.test102DirectSetter              avgt    3   6.583 ± 0.692  ns/op
+ * MeasureAssignment.test201MethodHandleInvokeExact   avgt    3   7.106 ± 1.053  ns/op
+ * MeasureAssignment.test202MethodHandleInvoke        avgt    3   7.071 ± 1.235  ns/op
+ * MeasureAssignment.test203MethodHandleInvokeSwitch  avgt    3  14.451 ± 2.389  ns/op
+ * MeasureAssignment.test301ReflectField              avgt    3  29.724 ± 0.608  ns/op
+ * MeasureAssignment.test302ReflectMethod             avgt    3  57.160 ± 4.887  ns/op
+ * MeasureAssignment.test401Lambda                    avgt    3   7.026 ± 1.693  ns/op
+ * MeasureAssignment.test402LambdaSwitch              avgt    3  14.566 ± 2.882  ns/op
  * </pre>
  *
  * @see java.lang.invoke.MethodHandle
  */
 @State(Scope.Thread)
 public class MeasureAssignment {
+
+  private static MockData parent = new MockData();
+  private static List<MockData> children = new ArrayList<>(0);
 
   public static void main(String[] args) throws Throwable {
     new Runner(
@@ -73,11 +76,8 @@ public class MeasureAssignment {
         .run();
   }
 
-  private static MockData parent = new MockData();
-  private static List<MockData> children = new ArrayList<>(0);
-
   @Benchmark
-  public MockData _101_DirectField() {
+  public MockData test101DirectField() {
     MockData data = new MockData();
     data.boolValue = true;
     data.intValue = 99;
@@ -88,7 +88,7 @@ public class MeasureAssignment {
   }
 
   @Benchmark
-  public MockData _102_DirectSetter() {
+  public MockData test102DirectSetter() {
     MockData data = new MockData();
     data.setBoolValue(true);
     data.setIntValue(99);
@@ -99,7 +99,7 @@ public class MeasureAssignment {
   }
 
   @Benchmark
-  public MockData _201_MethodHandleInvokeExact() throws Throwable {
+  public MockData test201MethodHandleInvokeExact() throws Throwable {
     MockData data = new MockData();
     MockData.Assignment.intValueSetter.invokeExact(data, 99);
     MockData.Assignment.boolValueSetter.invokeExact(data, true);
@@ -110,7 +110,7 @@ public class MeasureAssignment {
   }
 
   @Benchmark
-  public MockData _202_MethodHandleInvoke() throws Throwable {
+  public MockData test202MethodHandleInvoke() throws Throwable {
     MockData data = new MockData();
     MockData.Assignment.intValueSetter.invoke(data, 99);
     MockData.Assignment.boolValueSetter.invoke(data, true);
@@ -121,7 +121,7 @@ public class MeasureAssignment {
   }
 
   @Benchmark
-  public MockData _203_MethodHandleInvokeSwitch() throws Throwable {
+  public MockData test203MethodHandleInvokeSwitch() throws Throwable {
     MockData data = new MockData();
     MockData.Assignment.setObject(data, "intValue", 98);
     MockData.Assignment.setObject(data, "boolValue", true);
@@ -132,7 +132,7 @@ public class MeasureAssignment {
   }
 
   @Benchmark
-  public MockData _301_ReflectField() throws Throwable {
+  public MockData test301ReflectField() throws Throwable {
     MockData data = new MockData();
     MockData.Assignment2.intValueSetterF.setInt(data, 97);
     MockData.Assignment2.boolValueSetterF.setBoolean(data, true);
@@ -143,7 +143,7 @@ public class MeasureAssignment {
   }
 
   @Benchmark
-  public MockData _302_ReflectMethod() throws Throwable {
+  public MockData test302ReflectMethod() throws Throwable {
     MockData data = new MockData();
     MockData.Assignment3.intValueSetterM.invoke(data, 99);
     MockData.Assignment3.boolValueSetterM.invoke(data, true);
@@ -154,7 +154,7 @@ public class MeasureAssignment {
   }
 
   @Benchmark
-  public MockData _401_Lambda() {
+  public MockData test401Lambda() {
     MockData data = new MockData();
     MockData.Assignment4.intValueSetterFunc.accept(data, 99);
     MockData.Assignment4.boolValueSetterFunc.accept(data, true);
@@ -165,7 +165,7 @@ public class MeasureAssignment {
   }
 
   @Benchmark
-  public MockData _402_LambdaSwitch() {
+  public MockData test402LambdaSwitch() {
     MockData data = new MockData();
     MockData.Assignment4.setObject(data, "intValue", 98);
     MockData.Assignment4.setObject(data, "boolValue", true);
@@ -204,6 +204,11 @@ public class MeasureAssignment {
     }
 
     private abstract static class Assignment {
+      private static final MethodHandle intValueSetter;
+      private static final MethodHandle boolValueSetter;
+      private static final MethodHandle doubleValueSetter;
+      private static final MethodHandle parentSetter;
+      private static final MethodHandle childrenSetter;
 
       static void setObject(MockData data, String field, Object value) throws Throwable {
         int hash = field.hashCode();
@@ -228,12 +233,6 @@ public class MeasureAssignment {
         }
       }
 
-      private static final MethodHandle intValueSetter;
-      private static final MethodHandle boolValueSetter;
-      private static final MethodHandle doubleValueSetter;
-      private static final MethodHandle parentSetter;
-      private static final MethodHandle childrenSetter;
-
       static {
         MethodHandles.Lookup lookup = MethodHandles.lookup();
         try {
@@ -249,12 +248,11 @@ public class MeasureAssignment {
     }
 
     private static class Assignment2 {
-
-      static final Field intValueSetterF;
-      static final Field boolValueSetterF;
-      static final Field doubleValueSetterF;
-      static final Field parentSetterF;
-      static final Field childrenSetterF;
+      private static final Field intValueSetterF;
+      private static final Field boolValueSetterF;
+      private static final Field doubleValueSetterF;
+      private static final Field parentSetterF;
+      private static final Field childrenSetterF;
 
       static {
         try {
@@ -270,12 +268,11 @@ public class MeasureAssignment {
     }
 
     private static class Assignment3 {
-
-      static final Method intValueSetterM;
-      static final Method boolValueSetterM;
-      static final Method doubleValueSetterM;
-      static final Method parentSetterM;
-      static final Method childrenSetterM;
+      private static final Method intValueSetterM;
+      private static final Method boolValueSetterM;
+      private static final Method doubleValueSetterM;
+      private static final Method parentSetterM;
+      private static final Method childrenSetterM;
 
       static {
         try {
@@ -291,7 +288,6 @@ public class MeasureAssignment {
     }
 
     private static class Assignment4 {
-
       private static final BiConsumer<MockData, Object> intValueSetterFunc;
       private static final BiConsumer<MockData, Object> boolValueSetterFunc;
       private static final BiConsumer<MockData, Object> doubleValueSetterFunc;
