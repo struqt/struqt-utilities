@@ -146,25 +146,25 @@ public class VarLengthInt64 {
     if (value >= 0) {
       /* TODO: Google code format warning: 'if' expression need braces */
       if (value < 0x40L) return 1;
-      else if (value < 0x20_00L) return 2;
-      else if (value < 0x10_00_00L) return 3;
-      else if (value < 0x08_00_00_00L) return 4;
-      else if (value < 0x04_00_00_00_00L) return 5;
-      else if (value < 0x02_00_00_00_00_00L) return 6;
-      else if (value < 0x01_00_00_00_00_00_00L) return 7;
-      else if (value < 0x80_00_00_00_00_00_00L) return 8;
-      else if (value < 0x40_00_00_00_00_00_00_00L) return 9;
+      else if (value < 0x2000L) return 2;
+      else if (value < 0x100000L) return 3;
+      else if (value < 0x08000000L) return 4;
+      else if (value < 0x0400000000L) return 5;
+      else if (value < 0x020000000000L) return 6;
+      else if (value < 0x01000000000000L) return 7;
+      else if (value < 0x80000000000000L) return 8;
+      else if (value < 0x4000000000000000L) return 9;
       else return 10;
     } else {
       if (value >= -0x40L) return 1;
-      else if (value >= -0x20_00L) return 2;
-      else if (value >= -0x10_00_00L) return 3;
-      else if (value >= -0x08_00_00_00L) return 4;
-      else if (value >= -0x04_00_00_00_00L) return 5;
-      else if (value >= -0x02_00_00_00_00_00L) return 6;
-      else if (value >= -0x01_00_00_00_00_00_00L) return 7;
-      else if (value >= -0x80_00_00_00_00_00_00L) return 8;
-      else if (value >= -0x40_00_00_00_00_00_00_00L) return 9;
+      else if (value >= -0x2000L) return 2;
+      else if (value >= -0x100000L) return 3;
+      else if (value >= -0x08000000L) return 4;
+      else if (value >= -0x0400000000L) return 5;
+      else if (value >= -0x020000000000L) return 6;
+      else if (value >= -0x01000000000000L) return 7;
+      else if (value >= -0x80000000000000L) return 8;
+      else if (value >= -0x4000000000000000L) return 9;
       else return 10;
     }
   }
