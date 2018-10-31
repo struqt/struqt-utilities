@@ -223,8 +223,8 @@ public final class VarLengthInt64 {
     int shift = 0;
     int current = 0;
     long result = 0L;
-    boolean more = false;
-    do {
+    boolean more = true;
+    while (more) {
       if (index >= max) {
         break;
       }
@@ -244,7 +244,7 @@ public final class VarLengthInt64 {
                 + offset
                 + " of the source is not a well formed LEB128");
       }
-    } while (more);
+    }
     if (more) {
       int count = index - offset;
       throw new IllegalArgumentException(
@@ -273,10 +273,10 @@ public final class VarLengthInt64 {
     }
     int index = 0;
     int shift = 0;
-    int current;
+    int current = 0;
     long result = 0L;
-    boolean more = false;
-    do {
+    boolean more = true;
+    while (more) {
       current = source.read();
       if (-1 == current) {
         if (index == 0) {
@@ -296,7 +296,7 @@ public final class VarLengthInt64 {
                 + index
                 + " bytes which means the source byte stream is not a well formed LEB128");
       }
-    } while (more);
+    }
     if (more) {
       throw new IllegalArgumentException(
           "No ending byte after reading "
