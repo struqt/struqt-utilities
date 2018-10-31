@@ -26,6 +26,9 @@ import java.io.OutputStream;
  */
 public final class VarLengthInt64 {
 
+  private static final int BIT_COUNT = 64;
+  private static final int ENCODED_BYTE_MAX = 10;
+
   private VarLengthInt64() {}
 
   /**
@@ -185,9 +188,6 @@ public final class VarLengthInt64 {
       else return 10;
     }
   }
-
-  private static final int BIT_COUNT = 64;
-  private static final int ENCODED_BYTE_MAX = 10;
 
   /**
    * Decodes a 64-bit signed integer from the {@code source} byte array argument.
