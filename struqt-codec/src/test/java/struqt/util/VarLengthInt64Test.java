@@ -72,16 +72,19 @@ class VarLengthInt64Test {
         Long.MIN_VALUE,
       })
   void thresholds(long value) throws IOException {
-    ByteArrayOutputStream out = new ByteArrayOutputStream();
     int size = VarLengthInt64.sizeof(value);
+    ByteArrayOutputStream out = new ByteArrayOutputStream();
     int count1 = encode(value, out);
-    int count2 = encode(value, size, new byte[size]);
     assertEquals(size, count1);
-    assertEquals(size, count2);
-    log.trace("| {} | {} {}", size, value, Arrays.toString(out.toByteArray()));
     byte[] bytes = out.toByteArray();
-    assertEquals(value, decode(new ByteArrayInputStream(bytes)));
+    String expect = Arrays.toString(bytes);
+    byte[] encoded = new byte[size];
+    int count2 = encode(value, size, encoded);
+    assertEquals(size, count2);
+    assertEquals(expect, Arrays.toString(encoded));
     assertEquals(value, decode(bytes));
+    assertEquals(value, decode(new ByteArrayInputStream(bytes)));
+    log.trace("| {} | {} {}", size, value, expect);
   }
 
   @Test
@@ -102,7 +105,6 @@ class VarLengthInt64Test {
     assertThrows(IllegalArgumentException.class, () -> decode(null, 0));
     assertThrows(IllegalArgumentException.class, () -> decode(new byte[0]));
     assertThrows(IllegalArgumentException.class, () -> decode(new byte[] {-128}));
-
     final byte[] source =
         new byte[] {0, -128, -128, -128, -128, -128, -128, -128, -128, -128, -128, 64};
     assertEquals(0, decode(source, 0));

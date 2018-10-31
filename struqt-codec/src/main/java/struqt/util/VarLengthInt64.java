@@ -40,14 +40,17 @@ public class VarLengthInt64 {
    */
   public static int encode(long value, OutputStream destination) throws IOException {
     int count = 0;
-    long remaining = value >> 7;
-    long end = value >= 0L ? 0L : -1L;
-    boolean hasMore = true;
-    while (hasMore) {
-      hasMore = (remaining != end) || ((remaining & 1L) != ((value >> 6) & 1L));
-      destination.write((int) ((value & 0x7F) | (hasMore ? 0x80L : 0L)));
-      value = remaining;
-      remaining >>= 7;
+    long current;
+    boolean sign; /* sign bit of byte is set */
+    boolean more = true;
+    while (more) {
+      current = (0x7FL & value);
+      value >>= 7;
+      sign = (0x40L == (0x40L & current));
+      if ((sign && -1L == value) || (!sign && 0L == value)) {
+        more = false;
+      }
+      destination.write((int) ((more ? 0x80L : 0L) | current));
       count++;
     }
     return count;
@@ -127,14 +130,17 @@ public class VarLengthInt64 {
           "The result of offset + size is outside the bounds of the bytes array");
     }
     int index = offset;
-    long remaining = value >> 7;
-    long end = value >= 0L ? 0L : -1L;
-    boolean hasMore = true;
-    while (hasMore) {
-      hasMore = (remaining != end) || ((remaining & 1L) != ((value >> 6) & 1L));
-      destination[index] = (byte) ((value & 0x7F) | (hasMore ? 0x80L : 0L));
-      value = remaining;
-      remaining >>= 7;
+    long current;
+    boolean sign; /* sign bit of byte is set */
+    boolean more = true;
+    while (more) {
+      current = (0x7FL & value);
+      value >>= 7;
+      sign = (0x40L == (0x40L & current));
+      if ((sign && -1L == value) || (!sign && 0L == value)) {
+        more = false;
+      }
+      destination[index] = (byte) ((more ? 0x80L : 0L) | current);
       index++;
     }
     return index - offset;
@@ -244,7 +250,7 @@ public class VarLengthInt64 {
               + " of the source is not a well formed LEB128");
     }
     if (shift < BIT_COUNT && 0 != (0x40 & current)) {
-      result |= (~0L << shift);
+      result |= (-1L << shift);
     }
     return result;
   }
@@ -293,7 +299,7 @@ public class VarLengthInt64 {
               + " bytes which means the source byte stream is not a well formed LEB128");
     }
     if (shift < BIT_COUNT && 0 != (0x40 & current)) {
-      result |= (~0L << shift);
+      result |= (-1L << shift);
     }
     return result;
   }
