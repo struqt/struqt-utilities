@@ -24,7 +24,9 @@ import java.io.OutputStream;
  * @author Kang Wang
  * @since 1.2
  */
-public class VarLengthInt64 {
+public final class VarLengthInt64 {
+
+  private VarLengthInt64() {}
 
   /**
    * Encodes the specified {@code value} argument with signed LEB128 algorithm and writes the
@@ -38,16 +40,17 @@ public class VarLengthInt64 {
    * @see java.io.OutputStream#write(int)
    * @since 1.2
    */
-  public static int encode(long value, OutputStream destination) throws IOException {
+  public static int encode(final long value, final OutputStream destination) throws IOException {
+    long x = value;
     int count = 0;
     long current;
     boolean sign; /* sign bit of byte is set */
     boolean more = true;
     while (more) {
-      current = (0x7FL & value);
-      value >>= 7;
+      current = (0x7FL & x);
+      x >>= 7;
       sign = (0x40L == (0x40L & current));
-      if ((sign && -1L == value) || (!sign && 0L == value)) {
+      if ((sign && -1L == x) || (!sign && 0L == x)) {
         more = false;
       }
       destination.write((int) ((more ? 0x80L : 0L) | current));
@@ -118,7 +121,8 @@ public class VarLengthInt64 {
    *     bounds of the {@code destination} array
    * @since 1.2
    */
-  public static int encode(long value, int size, byte[] destination, int offset) {
+  public static int encode(
+      final long value, final int size, final byte[] destination, final int offset) {
     if (size <= 0) {
       throw new IllegalArgumentException("The size argument is not positive");
     }
@@ -129,15 +133,16 @@ public class VarLengthInt64 {
       throw new IllegalArgumentException(
           "The result of offset + size is outside the bounds of the bytes array");
     }
+    long x = value;
     int index = offset;
     long current;
     boolean sign; /* sign bit of byte is set */
     boolean more = true;
     while (more) {
-      current = (0x7FL & value);
-      value >>= 7;
+      current = (0x7FL & x);
+      x >>= 7;
       sign = (0x40L == (0x40L & current));
-      if ((sign && -1L == value) || (!sign && 0L == value)) {
+      if ((sign && -1L == x) || (!sign && 0L == x)) {
         more = false;
       }
       destination[index] = (byte) ((more ? 0x80L : 0L) | current);
