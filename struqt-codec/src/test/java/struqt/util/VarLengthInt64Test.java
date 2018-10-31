@@ -71,7 +71,7 @@ class VarLengthInt64Test {
         Long.MIN_VALUE + 1L,
         Long.MIN_VALUE,
       })
-  void thresholds(long value) throws IOException {
+  protected void thresholds(long value) throws IOException {
     int size = VarLengthInt64.sizeof(value);
     ByteArrayOutputStream out = new ByteArrayOutputStream();
     int count1 = encode(value, out);
@@ -88,7 +88,7 @@ class VarLengthInt64Test {
   }
 
   @Test
-  void encodeException() {
+  protected void encodeException() {
     final long value = random.nextLong();
     final int size = VarLengthInt64.sizeof(value);
     assertThrows(NullPointerException.class, () -> encode(value, size, null));
@@ -101,7 +101,7 @@ class VarLengthInt64Test {
   }
 
   @Test
-  void decodeException() throws IOException {
+  protected void decodeException() throws IOException {
     assertThrows(IllegalArgumentException.class, () -> decode(null, 0));
     assertThrows(IllegalArgumentException.class, () -> decode(new byte[0]));
     assertThrows(IllegalArgumentException.class, () -> decode(new byte[] {-128}));
