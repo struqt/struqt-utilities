@@ -6,8 +6,6 @@
 package struqt.util;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 
 /**
  * This class implements a method of variable length 64-bit signed integer encoding and
@@ -43,7 +41,7 @@ public final class VarLengthInt64 {
    * @see java.io.OutputStream#write(int)
    * @since 1.2
    */
-  public static int encode(final long value, final OutputStream destination) throws IOException {
+  public static int encode(final long value, final StreamWriter destination) throws IOException {
     long x = value;
     int count = 0;
     long current;
@@ -267,7 +265,7 @@ public final class VarLengthInt64 {
    * @return A 64-bit signed integer
    * @since 1.2
    */
-  public static long decode(InputStream source) throws IOException {
+  public static long decode(StreamReader source) throws IOException {
     if (null == source) {
       throw new IllegalArgumentException("The source byte array argument is null");
     }
