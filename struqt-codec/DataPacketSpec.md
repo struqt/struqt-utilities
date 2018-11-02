@@ -32,18 +32,21 @@ secret information.
 
 | No. | Name             | Optional | Data Type  | Sample Values   | Summary
 | ---:|:---------------- |:--------:|:----------:|:--------------- |:---------------------------------------------
-|  1  | start            | no       | int32      | 0xCE            | starting mark, a constant
-|  2  | revision         | no       | int32      | 0x01-0x7F       | revision number
-|  3  | options          | no       | int32      | 0x00-0x7FFFFFFF | option bits
-|  4  | nonce            | yes      | int32      | 0x00-0xFFFF     | absent when `0x01 & options` is 0. a random number
-|  5  | sign             | yes      | int32      | 0x00-0xFF       | absent when `0x02 & options` is 0. configuration ID for signature of this packet
-|  6  | compress         | yes      | int32      | 0x00-0xFF       | absent when `0x04 & options` is 0. configuration ID for data compression
-|  7  | crypto           | yes      | int32      | 0x00-0xFF       | absent when `0x04 & options` is 0. configuration ID for data encryption
-|  8  | format           | yes      | int32      | 0x00-0xFFFF     | absent when `0x04 & options` is 0. format of raw data
-|  9  | raw              | yes      | int32      | 0x00-0x7FFFFFFF | absent when `0x04 & options` is 0. length of raw data bytes
-| 10  | size             | yes      | int32      | 0x00-0x7FFFFFFF | absent when `0x04 & options` is 0. length of payload bytes
-| 11  | data             | yes      | byte[]     | 0x00-0xFF ...   | absent when `0x04 & options` is 0. payload bytes
-| 12  | signature        | yes      | byte[]     | 0x00-0xFF ...   | absent when `0x02 & options` is 0. signature bytes
+| 01  | start            | no       | byte[]     | 'S','D','P'     | starting mark, a constant
+| 02  | version          | no       | int32      | 0x01-0x7F       | revision number
+| 03  | revision         | no       | int32      | 0x01-0x7F       | revision number
+| 04  | nonce            | yes      | int32      | 0x00-0xFFFF     | a random number
+| 05  | options          | yes      | int32      | 0x00-0x7FFFFFFF | option bits
+| 06  | sign             | yes      | int32      | 0x00-0xFF       | absent when `0x08 & options` is 0. configuration ID for signature of this packet
+| 07  | compress         | yes      | int32      | 0x00-0xFF       | absent when `0x04 & options` is 0. configuration ID for data compression
+| 08  | crypto           | yes      | int32      | 0x00-0xFF       | absent when `0x02 & options` is 0. configuration ID for data encryption
+| 19  | format           | yes      | int32      | 0x00-0xFFFF     | absent when `0x01 & options` is 0. format of raw data
+| 10  | length           | yes      | int32      | 0x00-0x7FFFFFFF | absent when `0x01 & options` is 0. length of raw data bytes
+| 11  | lengthData       | yes      | int32      | 0x00-0x7FFFFFFF | absent when `0x01 & options` is 0. length of payload bytes
+| 12  | data             | yes      | byte[]     | 0x00-0xFF ...   | absent when `0x01 & options` is 0. payload bytes
+| 13  | lengthSign       | yes      | int32      | 0x00-0x7FFFFFFF | absent when `0x08 & options` is 0. length of signature bytes
+| 14  | signature        | yes      | byte[]     | 0x00-0xFF ...   | absent when `0x08 & options` is 0. signature bytes
+
 
 
 ----
