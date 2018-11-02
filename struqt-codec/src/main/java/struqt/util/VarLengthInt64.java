@@ -6,8 +6,6 @@
 package struqt.util;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 
 /**
  * This class implements a method of variable length 64-bit signed integer encoding and
@@ -24,7 +22,12 @@ import java.io.OutputStream;
  * @author Kang Wang
  * @since 1.2
  */
-public class VarLengthInt64 {
+public final class VarLengthInt64 {
+
+  private static final int BIT_COUNT = 64;
+  private static final int ENCODED_BYTE_MAX = 10;
+
+  private VarLengthInt64() {}
 
   /**
    * Encodes the specified {@code value} argument with signed LEB128 algorithm and writes the
@@ -38,16 +41,17 @@ public class VarLengthInt64 {
    * @see java.io.OutputStream#write(int)
    * @since 1.2
    */
-  public static int encode(long value, OutputStream destination) throws IOException {
+  public static int encode(final long value, final StreamWriter destination) throws IOException {
+    long x = value;
     int count = 0;
     long current;
     boolean sign; /* sign bit of byte is set */
     boolean more = true;
     while (more) {
-      current = (0x7FL & value);
-      value >>= 7;
+      current = (0x7FL & x);
+      x >>= 7;
       sign = (0x40L == (0x40L & current));
-      if ((sign && -1L == value) || (!sign && 0L == value)) {
+      if ((sign && -1L == x) || (!sign && 0L == x)) {
         more = false;
       }
       destination.write((int) ((more ? 0x80L : 0L) | current));
@@ -118,7 +122,8 @@ public class VarLengthInt64 {
    *     bounds of the {@code destination} array
    * @since 1.2
    */
-  public static int encode(long value, int size, byte[] destination, int offset) {
+  public static int encode(
+      final long value, final int size, final byte[] destination, final int offset) {
     if (size <= 0) {
       throw new IllegalArgumentException("The size argument is not positive");
     }
@@ -129,15 +134,16 @@ public class VarLengthInt64 {
       throw new IllegalArgumentException(
           "The result of offset + size is outside the bounds of the bytes array");
     }
+    long x = value;
     int index = offset;
     long current;
     boolean sign; /* sign bit of byte is set */
     boolean more = true;
     while (more) {
-      current = (0x7FL & value);
-      value >>= 7;
+      current = (0x7FL & x);
+      x >>= 7;
       sign = (0x40L == (0x40L & current));
-      if ((sign && -1L == value) || (!sign && 0L == value)) {
+      if ((sign && -1L == x) || (!sign && 0L == x)) {
         more = false;
       }
       destination[index] = (byte) ((more ? 0x80L : 0L) | current);
@@ -181,9 +187,6 @@ public class VarLengthInt64 {
     }
   }
 
-  private static final int BIT_COUNT = 64;
-  private static final int ENCODED_BYTE_MAX = 10;
-
   /**
    * Decodes a 64-bit signed integer from the {@code source} byte array argument.
    *
@@ -218,8 +221,8 @@ public class VarLengthInt64 {
     int shift = 0;
     int current = 0;
     long result = 0L;
-    boolean more = false;
-    do {
+    boolean more = true;
+    while (more) {
       if (index >= max) {
         break;
       }
@@ -239,7 +242,7 @@ public class VarLengthInt64 {
                 + offset
                 + " of the source is not a well formed LEB128");
       }
-    } while (more);
+    }
     if (more) {
       int count = index - offset;
       throw new IllegalArgumentException(
@@ -262,16 +265,16 @@ public class VarLengthInt64 {
    * @return A 64-bit signed integer
    * @since 1.2
    */
-  public static long decode(InputStream source) throws IOException {
+  public static long decode(StreamReader source) throws IOException {
     if (null == source) {
       throw new IllegalArgumentException("The source byte array argument is null");
     }
     int index = 0;
     int shift = 0;
-    int current;
+    int current = 0;
     long result = 0L;
-    boolean more = false;
-    do {
+    boolean more = true;
+    while (more) {
       current = source.read();
       if (-1 == current) {
         if (index == 0) {
@@ -291,7 +294,7 @@ public class VarLengthInt64 {
                 + index
                 + " bytes which means the source byte stream is not a well formed LEB128");
       }
-    } while (more);
+    }
     if (more) {
       throw new IllegalArgumentException(
           "No ending byte after reading "

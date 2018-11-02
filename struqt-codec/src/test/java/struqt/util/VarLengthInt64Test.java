@@ -71,10 +71,10 @@ class VarLengthInt64Test {
         Long.MIN_VALUE + 1L,
         Long.MIN_VALUE,
       })
-  void thresholds(long value) throws IOException {
+  protected void thresholds(long value) throws IOException {
     int size = VarLengthInt64.sizeof(value);
     ByteArrayOutputStream out = new ByteArrayOutputStream();
-    int count1 = encode(value, out);
+    int count1 = encode(value, out::write);
     assertEquals(size, count1);
     byte[] bytes = out.toByteArray();
     String expect = Arrays.toString(bytes);
@@ -83,12 +83,12 @@ class VarLengthInt64Test {
     assertEquals(size, count2);
     assertEquals(expect, Arrays.toString(encoded));
     assertEquals(value, decode(bytes));
-    assertEquals(value, decode(new ByteArrayInputStream(bytes)));
+    assertEquals(value, decode(new ByteArrayInputStream(bytes)::read));
     log.trace("| {} | {} {}", size, value, expect);
   }
 
   @Test
-  void encodeException() {
+  protected void encodeException() {
     final long value = random.nextLong();
     final int size = VarLengthInt64.sizeof(value);
     assertThrows(NullPointerException.class, () -> encode(value, size, null));
@@ -101,7 +101,7 @@ class VarLengthInt64Test {
   }
 
   @Test
-  void decodeException() throws IOException {
+  protected void decodeException() throws IOException {
     assertThrows(IllegalArgumentException.class, () -> decode(null, 0));
     assertThrows(IllegalArgumentException.class, () -> decode(new byte[0]));
     assertThrows(IllegalArgumentException.class, () -> decode(new byte[] {-128}));
@@ -123,14 +123,15 @@ class VarLengthInt64Test {
     assertThrows(IllegalArgumentException.class, () -> decode(source, 12));
     assertThrows(IllegalArgumentException.class, () -> decode(source, 13));
 
-    assertThrows(IllegalArgumentException.class, () -> decode((InputStream) null));
+    assertThrows(IllegalArgumentException.class, () -> decode((StreamReader) null));
     assertThrows(
-        IllegalArgumentException.class, () -> decode(new ByteArrayInputStream(new byte[0])));
+        IllegalArgumentException.class, () -> decode(new ByteArrayInputStream(new byte[0])::read));
     assertThrows(
-        IllegalArgumentException.class, () -> decode(new ByteArrayInputStream(new byte[] {-128})));
+        IllegalArgumentException.class,
+        () -> decode(new ByteArrayInputStream(new byte[] {-128})::read));
     InputStream stream = new ByteArrayInputStream(source);
     stream.mark(source.length);
-    assertEquals(0, decode(stream));
+    assertEquals(0, decode(stream::read));
     assertThrows(IllegalArgumentException.class, () -> decodeStream(stream, 1));
     assertThrows(IllegalArgumentException.class, () -> decodeStream(stream, 2));
     assertEquals(-1L << 62, decodeStream(stream, 3));
@@ -152,6 +153,6 @@ class VarLengthInt64Test {
     if (skip > offset) {
       return 0;
     }
-    return decode(stream);
+    return decode(stream::read);
   }
 }
