@@ -266,9 +266,6 @@ public final class VarLengthInt64 {
    * @since 1.2
    */
   public static long decode(StreamReader source) throws IOException {
-    if (null == source) {
-      throw new IllegalArgumentException("The source byte array argument is null");
-    }
     int index = 0;
     int shift = 0;
     int current = 0;
@@ -278,7 +275,7 @@ public final class VarLengthInt64 {
       current = source.read();
       if (-1 == current) {
         if (index == 0) {
-          throw new IllegalArgumentException("The source byte array argument is empty");
+          throw new IllegalArgumentException("Reaches the end of the source byte steam");
         }
         break;
       }

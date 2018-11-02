@@ -1,10 +1,14 @@
+/*
+ * Copyright (c) 2018. Kang Wang. The following code is distributed under
+ * the terms of the MIT license found at http://opensource.org/licenses/MIT
+ */
+
 package struqt.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -19,9 +23,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static struqt.util.VarLengthInt64.decode;
 import static struqt.util.VarLengthInt64.encode;
 
+@Slf4j
 class VarLengthInt64Test {
 
-  private static final Logger log = LoggerFactory.getLogger(VarLengthInt64Test.class);
   private static final Random random = new SecureRandom();
 
   @ParameterizedTest
@@ -123,7 +127,7 @@ class VarLengthInt64Test {
     assertThrows(IllegalArgumentException.class, () -> decode(source, 12));
     assertThrows(IllegalArgumentException.class, () -> decode(source, 13));
 
-    assertThrows(IllegalArgumentException.class, () -> decode((StreamReader) null));
+    assertThrows(NullPointerException.class, () -> decode((StreamReader) null));
     assertThrows(
         IllegalArgumentException.class, () -> decode(new ByteArrayInputStream(new byte[0])::read));
     assertThrows(
