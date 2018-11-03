@@ -8,10 +8,19 @@ package struqt.util;
 import java.io.IOException;
 import java.util.Arrays;
 
+/**
+ * Represents data to be encoded or stores data that decoded from a sequence of byte.
+ *
+ * @author Kang Wang
+ * @since 1.2
+ */
 public final class DataPacket {
 
+  /** A constant bytes as starting mark; "SDP" is short for "Struqt Data Package/Protocol". */
   public static final String START = "SDP";
+  /** Default version of this packet implementation. */
   public static final int VERSION = 1;
+  /** Default revision of this packet implementation. */
   public static final int REVISION = 1;
 
   private final int version;
@@ -51,6 +60,11 @@ public final class DataPacket {
     this.signature = signature;
   }
 
+  /**
+   * Creates a new {@code DataPacket.Builder} object to build a new {@code DataPacket} instance.
+   *
+   * @return a new {@code DataPacket.Builder} object
+   */
   public static Builder builder() {
     return new Builder();
   }

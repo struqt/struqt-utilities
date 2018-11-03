@@ -102,6 +102,8 @@ class DataPacketTest {
             .data(new byte[] {1})
             .build()
             .equals(DataPacket.builder().data(new byte[] {2}).build()));
+    assertTrue(packet.getOptions().equals(packet.getOptions()));
+    assertFalse(packet.getOptions().equals(null));
   }
 
   @Test

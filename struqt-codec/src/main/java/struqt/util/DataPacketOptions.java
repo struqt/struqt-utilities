@@ -5,12 +5,19 @@
 
 package struqt.util;
 
-public class DataPacketOptions {
+/**
+ * Represents bit set options for controlling how to decode some parts of a byte sequence.
+ *
+ * @author Kang Wang
+ * @since 1.2
+ * @see DataPacket#getOptions()
+ */
+public final class DataPacketOptions {
 
-  private static final int OPTION_SIGNATURE = 1 << 3;
-  private static final int OPTION_ENCRYPT = 1 << 2;
-  private static final int OPTION_COMPRESS = 1 << 1;
-  private static final int OPTION_DATA = 1;
+  private static final int OPTION_SIGNATURE /* */ = 1 << 3;
+  private static final int OPTION_ENCRYPT /*   */ = 1 << 2;
+  private static final int OPTION_COMPRESS /*  */ = 1 << 1;
+  private static final int OPTION_DATA /*      */ = 1;
 
   private final int value;
   private final boolean signature;
@@ -19,9 +26,10 @@ public class DataPacketOptions {
   private final boolean data;
 
   /**
-   * TODO ...
+   * Construct an instance with an integer that contains all bit set {@code options}.
    *
-   * @param options option bits
+   * @param options an integer that contains all bit set {@code options}
+   * @see DataPacketDecoder#decode(StreamReader)
    */
   public DataPacketOptions(final int options) {
     this.value = options;
@@ -32,12 +40,13 @@ public class DataPacketOptions {
   }
 
   /**
-   * TODO ...
+   * Construct an instance with some specified {@code boolean} arguments.
    *
    * @param signature if signature bit is set
    * @param encrypt if encrypt bit is set
    * @param compress if compress bit is set
    * @param data if data bit is set
+   * @see DataPacket.Builder#build()
    */
   public DataPacketOptions(boolean signature, boolean encrypt, boolean compress, boolean data) {
     this.signature = signature;
@@ -60,22 +69,50 @@ public class DataPacketOptions {
     this.value = value;
   }
 
+  /**
+   * Returns an integer that contains all bit set {@code options}.
+   *
+   * @return an integer that contains all bit set {@code options}
+   */
   public int getValue() {
     return value;
   }
 
+  /**
+   * Returns a {@code boolean} value indicating whether the packet has a signature to make sure the
+   * packet is free of been tampered with.
+   *
+   * @return true when {@code 0x08 & value} is not 0 and false otherwise
+   */
   public boolean hasSignature() {
     return signature;
   }
 
+  /**
+   * Returns a {@code boolean} value indicating whether the packet data is encrypted to prevent
+   * sensitive information from being leaked.
+   *
+   * @return true when {@code 0x04 & value} is not 0 and false otherwise
+   */
   public boolean hasEncrypt() {
     return encrypt;
   }
 
+  /**
+   * Returns a {@code boolean} value indicating whether the packet data is compressed to maintain a
+   * smaller size.
+   *
+   * @return true when {@code 0x02 & value} is not 0 and false otherwise
+   */
   public boolean hasCompress() {
     return compress;
   }
 
+  /**
+   * Returns a {@code boolean} value indicating whether the packet data is absent.
+   *
+   * @return true when {@code 0x01 & value} is not 0 and false otherwise
+   */
   public boolean hasData() {
     return data;
   }
@@ -98,10 +135,20 @@ public class DataPacketOptions {
     return value == that.value;
   }
 
+  /**
+   * Returns a hash code value for the object.
+   *
+   * @return a hash code value for this object
+   */
   public int hashCode() {
     return value;
   }
 
+  /**
+   * Returns a string representation of the object.
+   *
+   * @return a string representation of the object.
+   */
   public String toString() {
     return String.valueOf(value);
   }
