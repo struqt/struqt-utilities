@@ -24,6 +24,7 @@ public interface StreamReader {
    *
    * @return the next byte of data, or {@code -1} if the end of the stream is reached
    * @throws java.io.IOException if an I/O error occurs
+   * @see java.io.InputStream#read()
    * @since 1.2
    */
   int read() throws IOException;

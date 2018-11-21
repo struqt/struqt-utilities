@@ -27,7 +27,26 @@ public final class VarLengthInt64 {
   private static final int BIT_COUNT = 64;
   private static final int ENCODED_BYTE_MAX = 10;
 
-  private VarLengthInt64() {}
+  private final long value;
+  private final int size;
+
+  private VarLengthInt64(long value, int size) {
+    this.value = value;
+    this.size = size;
+  }
+
+  public long getValue() {
+    return value;
+  }
+
+  public int getSize() {
+    return size;
+  }
+
+  private static VarLengthInt64 create(long value, int size) {
+    assert size == sizeof(value);
+    return new VarLengthInt64(value, size);
+  }
 
   /**
    * Encodes the specified {@code value} argument with signed LEB128 algorithm and writes the
@@ -194,7 +213,7 @@ public final class VarLengthInt64 {
    * @return A 64-bit signed integer
    * @since 1.2
    */
-  public static long decode(byte[] source) {
+  public static VarLengthInt64 decode(byte[] source) {
     return decode(source, 0);
   }
 
@@ -208,7 +227,7 @@ public final class VarLengthInt64 {
    *     or be decoded
    * @since 1.2
    */
-  public static long decode(byte[] source, int offset) {
+  public static VarLengthInt64 decode(byte[] source, int offset) {
     if (null == source || 0 >= source.length || offset < 0 || offset >= source.length) {
       throw new IllegalArgumentException(
           "No byte available at offset position " + offset + " of the source byte array");
@@ -255,7 +274,7 @@ public final class VarLengthInt64 {
     if (shift < BIT_COUNT && 0 != (0x40 & current)) {
       result |= (-1L << shift);
     }
-    return result;
+    return create(result, index - offset);
   }
 
   /**
@@ -265,7 +284,7 @@ public final class VarLengthInt64 {
    * @return A 64-bit signed integer
    * @since 1.2
    */
-  public static long decode(StreamReader source) throws IOException {
+  public static VarLengthInt64 decode(StreamReader source) throws IOException {
     int index = 0;
     int shift = 0;
     int current = 0;
@@ -301,6 +320,6 @@ public final class VarLengthInt64 {
     if (shift < BIT_COUNT && 0 != (0x40 & current)) {
       result |= (-1L << shift);
     }
-    return result;
+    return create(result, index);
   }
 }

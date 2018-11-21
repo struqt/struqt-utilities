@@ -9,19 +9,23 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.stubbing.OngoingStubbing;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.atLeast;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static struqt.util.VarLengthInt64.decode;
 import static struqt.util.VarLengthInt64.encode;
+import static struqt.util.VarLengthInt64.sizeof;
 
 @Slf4j
 class VarLengthInt64Test {
@@ -76,25 +80,18 @@ class VarLengthInt64Test {
         Long.MIN_VALUE,
       })
   protected void thresholds(long value) throws IOException {
-    int size = VarLengthInt64.sizeof(value);
-    ByteArrayOutputStream out = new ByteArrayOutputStream();
-    int count1 = encode(value, out::write);
-    assertEquals(size, count1);
-    byte[] bytes = out.toByteArray();
-    String expect = Arrays.toString(bytes);
+    final int size = sizeof(value);
     byte[] encoded = new byte[size];
-    int count2 = encode(value, size, encoded);
-    assertEquals(size, count2);
-    assertEquals(expect, Arrays.toString(encoded));
-    assertEquals(value, decode(bytes));
-    assertEquals(value, decode(new ByteArrayInputStream(bytes)::read));
-    log.trace("| {} | {} {}", size, value, expect);
+    encode(value, encoded);
+    log.debug("value={}, encoded={}", value, Arrays.toString(encoded));
+    testStreamEncoding(value, encoded);
+    testStreamDecoding(value, encoded);
   }
 
   @Test
   protected void encodeException() {
     final long value = random.nextLong();
-    final int size = VarLengthInt64.sizeof(value);
+    final int size = sizeof(value);
     assertThrows(NullPointerException.class, () -> encode(value, size, null));
     assertThrows(IllegalArgumentException.class, () -> encode(value, 0, null));
     assertThrows(IllegalArgumentException.class, () -> encode(value, new byte[0], -1));
@@ -111,52 +108,48 @@ class VarLengthInt64Test {
     assertThrows(IllegalArgumentException.class, () -> decode(new byte[] {-128}));
     final byte[] source =
         new byte[] {0, -128, -128, -128, -128, -128, -128, -128, -128, -128, -128, 64};
-    assertEquals(0, decode(source, 0));
+    assertEquals(0, decode(source, 0).getValue());
     assertThrows(IllegalArgumentException.class, () -> decode(source, 1));
-    /* Invalid source cause overflow */
     assertThrows(IllegalArgumentException.class, () -> decode(source, 2));
-    assertEquals(-1L << 62, decode(source, 3));
-    assertEquals(-1L << 55, decode(source, 4));
-    assertEquals(-1L << 48, decode(source, 5));
-    assertEquals(-1L << 41, decode(source, 6));
-    assertEquals(-1L << 34, decode(source, 7));
-    assertEquals(-1L << 27, decode(source, 8));
-    assertEquals(-1L << 20, decode(source, 9));
-    assertEquals(-1L << 13, decode(source, 10));
-    assertEquals(-1L << 6, decode(source, 11));
+    assertEquals(-1L << 62, decode(source, 3).getValue());
+    assertEquals(-1L << 55, decode(source, 4).getValue());
+    assertEquals(-1L << 48, decode(source, 5).getValue());
+    assertEquals(-1L << 41, decode(source, 6).getValue());
+    assertEquals(-1L << 34, decode(source, 7).getValue());
+    assertEquals(-1L << 27, decode(source, 8).getValue());
+    assertEquals(-1L << 20, decode(source, 9).getValue());
+    assertEquals(-1L << 13, decode(source, 10).getValue());
+    assertEquals(-1L << 6, decode(source, 11).getValue());
     assertThrows(IllegalArgumentException.class, () -> decode(source, 12));
     assertThrows(IllegalArgumentException.class, () -> decode(source, 13));
-
     assertThrows(NullPointerException.class, () -> decode((StreamReader) null));
-    assertThrows(
-        IllegalArgumentException.class, () -> decode(new ByteArrayInputStream(new byte[0])::read));
-    assertThrows(
-        IllegalArgumentException.class,
-        () -> decode(new ByteArrayInputStream(new byte[] {-128})::read));
-    InputStream stream = new ByteArrayInputStream(source);
-    stream.mark(source.length);
-    assertEquals(0, decode(stream::read));
-    assertThrows(IllegalArgumentException.class, () -> decodeStream(stream, 1));
-    assertThrows(IllegalArgumentException.class, () -> decodeStream(stream, 2));
-    assertEquals(-1L << 62, decodeStream(stream, 3));
-    assertEquals(-1L << 55, decodeStream(stream, 4));
-    assertEquals(-1L << 48, decodeStream(stream, 5));
-    assertEquals(-1L << 41, decodeStream(stream, 6));
-    assertEquals(-1L << 34, decodeStream(stream, 7));
-    assertEquals(-1L << 27, decodeStream(stream, 8));
-    assertEquals(-1L << 20, decodeStream(stream, 9));
-    assertEquals(-1L << 13, decodeStream(stream, 10));
-    assertEquals(-1L << 6, decodeStream(stream, 11));
-    assertThrows(IllegalArgumentException.class, () -> decodeStream(stream, 12));
-    assertThrows(IllegalArgumentException.class, () -> decodeStream(stream, 13));
+    StreamReader mockReader = mock(StreamReader.class);
+    when(mockReader.read()).thenReturn(-1);
+    assertThrows(IllegalArgumentException.class, () -> decode(mockReader));
+    when(mockReader.read()).thenReturn(-128);
+    assertThrows(IllegalArgumentException.class, () -> decode(mockReader));
+    when(mockReader.read()).thenReturn(255, 255, -1);
+    assertThrows(IllegalArgumentException.class, () -> decode(mockReader));
   }
 
-  private long decodeStream(InputStream stream, int offset) throws IOException {
-    stream.reset();
-    long skip = stream.skip(offset);
-    if (skip > offset) {
-      return 0;
+  private void testStreamEncoding(long value, byte[] encoded) throws IOException {
+    final StreamWriter mockStream = mock(StreamWriter.class);
+    int actual = encode(value, mockStream);
+    for (byte b : encoded) {
+      verify(mockStream, atLeast(1)).write(0xFF & b);
     }
-    return decode(stream::read);
+    assertEquals(sizeof(value), actual);
+  }
+
+  private void testStreamDecoding(long value, byte[] encoded) throws IOException {
+    final StreamReader reader = mock(StreamReader.class);
+    OngoingStubbing<Integer> stub = when(reader.read());
+    for (byte b : encoded) {
+      stub = stub.thenReturn(0xFF & b);
+    }
+    VarLengthInt64 number = decode(reader);
+    verify(reader, times(encoded.length)).read();
+    assertEquals(value, number.getValue());
+    assertEquals(sizeof(value), number.getSize());
   }
 }

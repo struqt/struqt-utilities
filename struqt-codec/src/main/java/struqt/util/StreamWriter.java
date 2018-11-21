@@ -23,6 +23,7 @@ public interface StreamWriter {
    *
    * @param b the specified byte
    * @throws java.io.IOException if an I/O error occurs
+   * @see java.io.OutputStream#write(int)
    * @since 1.2
    */
   void write(int b) throws IOException;
