@@ -1,22 +1,19 @@
 language: java
 sudo: false
 
-jdk:
-  - openjdk8
-  - openjdk11
+jdk: [ openjdk8, openjdk11, openjdk17 ]
 
 matrix:
   allow_failures:
     - jdk: openjdk11
+    - jdk: openjdk17
 
 cache:
   directories:
     - .autoconf
     - $HOME/.m2
 
-branches:
-  only:
-    - develop
+branches: { only: [ master ] }
 
 after_success:
   - mvn clean test -Pcoveralls jacoco:report coveralls:report

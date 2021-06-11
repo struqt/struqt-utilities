@@ -8,7 +8,7 @@ package struqt.util;
 import java.util.Arrays;
 
 /**
- * Base64 codec implementation as <a href="https://tools.ietf.org/html/rfc2045#section-6.8">RFC
+ * Base64 encode and decode implementation as <a href="https://tools.ietf.org/html/rfc2045#section-6.8">RFC
  * 2045</a> and <a href="https://tools.ietf.org/html/rfc4648">RFC 4648</a> specified.
  *
  * @author wangkang
@@ -33,7 +33,7 @@ public abstract class Base64 {
   };
 
   private static final byte[] EMPTY_BYTES = new byte[0];
-  private static final int DECODE_MAP[] = {
+  private static final int[] DECODE_MAP = {
     -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
     -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
     -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 62, -1, 62, -1, 63,
