@@ -14,7 +14,7 @@ import java.util.Arrays;
  * @author wangkang
  * @since 1.1
  */
-public class Base64 {
+public abstract class Base64 {
 
   private static final char[] EMPTY_CHARS = new char[0];
   private static final char[] LINE_SEPARATOR = new char[] {'\r', '\n'};

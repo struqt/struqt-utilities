@@ -3,11 +3,11 @@ sudo: false
 
 jdk:
   - openjdk8
-  - oraclejdk9
+  - openjdk11
 
 matrix:
   allow_failures:
-    - jdk: oraclejdk9
+    - jdk: openjdk11
 
 cache:
   directories:
