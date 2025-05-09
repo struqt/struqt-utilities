@@ -16,17 +16,18 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '8'
-          server-id: ossrh # Value of the distributionManagement/repository/id field of the pom.xml
+          gpg-passphrase: MAVEN_GPG_PASSPHRASE
+          gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
+          server-id: central-portal
           server-username: MAVEN_USERNAME
           server-password: MAVEN_PASSWORD
-          gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
-          gpg-passphrase: MAVEN_GPG_PASSPHRASE
 
       - run: gpg --list-keys
+
       - run: cat $HOME/.m2/settings.xml
 
       - name: Publish to Apache Maven Central
-        run: ./mvnw deploy -P ossrh
+        run: ./mvnw clean deploy -P central-portal -D skipTests
         env:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
