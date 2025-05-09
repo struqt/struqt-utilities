@@ -20,3 +20,10 @@ Java utilities class libraries
 |[struqt-util-benchmark](/struqt-util-benchmark) |Benchmark tests with [JMH](http://openjdk.java.net/projects/code-tools/jmh/)|
 |[struqt-unique-id](/struqt-unique-id)           |Unique ID generator inspired by Twitter's Snowflake|
 |[struqt-base64](/struqt-base64)                 |Base64 codec implementation as [RFC 2045](https://tools.ietf.org/html/rfc2045#section-6.8) and [RFC 4648](https://tools.ietf.org/html/rfc4648) specified|
+
+
+###
+
+```sh
+./mvnw clean package
+```
